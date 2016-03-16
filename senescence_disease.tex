@@ -26,11 +26,11 @@
 
 \def\keyFont{\fontsize{8}{11}\helveticabold }
 \def\firstAuthorLast{Camargo {et~al.}} %use et al only if is more than 1 author
-\def\Authors{Anyela V Camargo\,$^{1,*}$, Jan T Kim\,$^{2}$ and Alison Bentley\,$^{2}$}
+\def\Authors{Anyela V Camargo\,$^{1,*}$, Jan T Kim\,$^{2}$}
 % Affiliations should be keyed to the author's name with superscript numbers and be listed as follows: Laboratory, Institute, Department, Organization, City, State abbreviation (USA, Canada, Australia), and Country (without detailed address information such as city zip codes or street names).
 % If one of the authors has a change of address, list the new address below the correspondence details using a superscript symbol and use the same symbol to indicate the author in the author list.
 \def\Address{$^{1}$National Plant Phenomics Centre, IBERS, Aberyswyth University, Gogerddan, Aberystwyth, SY23 3EB, UK\\
-$^{2}$Laboratory X, Institute X, Department X, Organization X, City X , State XX (only USA, Canada and Australia), Country X  }
+$^{}$ }
 % The Corresponding Author should be marked with an asterisk
 % Provide the exact contact address (this time including street name and city zip code) and email of the corresponding author
 \def\corrAuthor{Anyela V Camargo}
@@ -66,7 +66,10 @@ $^{2}$Laboratory X, Institute X, Department X, Organization X, City X , State XX
 
 \section{Introduction}
 
-Senescence is the last developmental stage of plant cells, tissues, organs, and, in the case of monocarpic species, the entire plant. Once senescence has been initiated, it typically leads to a massive remobilization of phloem-mobile nutrients from the senescing plant parts to developing sinks, such as seeds and grains of monocarpic crops. In this context, nitrogen holds a special position. It is the quantitatively most important plant mineral nutrient, and nitrogen-containing macromolecules  have to be hydrolysed and converted to glutamate, glutamine and (to a lesser extent) other amino acids prior to phloem loading and transport to developing sinks \cite{Distelfeld27012014}.
+Senescence is the last developmental stage of plant cells, tissues, organs, and, in the case of monocarpic species, the entire plant. Once senescence has been initiated, it typically leads to a massive remobilization of phloem-mobile nutrients from the senescing plant parts to developing sinks, such as seeds and grains of monocarpic crops \cite{Distelfeld27012014}. Plant senescence can be triggered by a range of abiotic and biotic factors such as light, UV, ozone, hormones, drought and various pests \cite{PLB:PLB114} Fig \ref{fig1:flowchart}. Pathogen infections interact with developmental processes in a complex way. The outcome of this interaction may greatly influence plant productivity as well as resistance and susceptibility. Pathogenesis and development mutually influence each other. On the one hand, developmental conditions of the host plant may determine the outcome of pathogen infection. On the other hand, pathogen infection can change the developmental program of the host. Symptoms of senescence often accompany the progression of disease. In other cases, senescence is delayed in response to pathogen infection. The lifestyle of the pathogen plays an important role for the developmental response of the host. Necrotrophic pathogens derive nutrients from dead cells, whereas biotrophic pathogens need living cells to meet their nutritional demands. Between both extremes, a third nutritional type is recognized: the hemibiotrophs. Hemibiotrophs adopt both lifestyles, switching from a biotrophic phase at the beginning of the infection to a necrotrophic lifestyle as pathogenesis proceeds. Generally, senescence and cell death are regarded as favorable to the necrotrophic lifestyle, and necrotrophic pathogens have adopted strategies to induce senescence by manipulating the respective signaling pathways in plants. Consequently, a defense strategy against necrotrophs would consist of the host’s ability to prevent senescence-like processes. Conversely, biotrophic pathogens benefit from living cells and change signaling processes in the host to delay senescence. The most efficient defense strategy against biotrophs is therefore the controlled induction of cell death during the hypersensitive response (HR), thus starving the pathogen in confined regions. It can easily be imagined that the situation is especially complex for hemibiotrophs. Resistance against necrotrophs and hemibiotrophs is often quantitative, i.e., restricting, but not eliminating the pathogen \cite{plants4030449}.
+
+We have used a data integrative approach to screen a large population of wheat plants to try to understand the interaction plant - pathogens and its influence on the onset of senescence both at the leaf and whole plant level.
+
 
 %\begin{methods}
 \section{Material \& Methods}
@@ -107,11 +110,9 @@ Moreover, six further traits were extracted from the images; caliper length, hei
 Statistical analyses were performed using the R environment \cite{RManual}. 
 
 \section{Results}
-Tan spot resistance was evaluated in the greenhouse by measuring the extent of the necrotic/chlorotic response exhibited by the plant (IT).
+Tan spot resistance was evaluated in the greenhouse by measuring the extent of the necrotic/chlorotic response exhibited by the plant (IT). The evaluation was peformed twice and by a different person two avoid bias in the assessment. When comparing disease scores against the onset of senescence at the Flag Leaf, we found that disease severity was in general directly associated with the onset of senescence. In other words, the more severely affected the plants were the more lilkely they were to start senescence sooner Fig \ref{fig2}. This result is consistent with the way necrotrophic plant pathogens act, they derive nutrients from dead cells. Therefore, promoting senescence in the host by manipulating respective signaling pathways is a mechanism they use to speed up cell death. 
 
-When comparing disease scores against the onset of senescence at the Flag Leaf we found a correlation between disease severity and early onset of senescence Fig \ref{fig:01}. This result is consistent with the way necrotrophic plant pathogens act. They promote senescence in the host by manipulating respective signaling pathways. 
-
-We also found some lines whose disease succesptibility was high (i.e. 4) but whose senescence onset was delay Fig \ref{fig:02}. 
+We also found some lines whose disease succesptibility was high (i.e. 4) but whose senescence onset was delay Fig \ref{fig3}. 
 
 
 \section{Discussion}
@@ -146,11 +147,19 @@ Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the da
 %%% There is no need for adding the file termination, as long as you indicate where the file is saved. In the examples below the files (logo1.jpg and logo2.eps) are in the Frontiers LaTeX folder
 %%% If using *.tif files convert them to .jpg or .png
 
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=10cm]{flowchart.jpg}
+\end{center}
+ \caption{ Whole leaf senescence flowchart}\label{fig1:flowchart}
+\end{figure}
+
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=10cm]{s_d.png}
 \end{center}
- \textbf{\refstepcounter{figure}\label{fig:01} Figure \arabic{figure}.}{Disease severity vs onset of senescence}
+ \caption{Disease severity vs onset of senescence}\label{fig2}
 \end{figure}
 
 
@@ -169,8 +178,8 @@ Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the da
         %\label{fig:mouse}
     \end{subfigure}
 \end{center}
-    %\caption{Pictures of animals}\label{fig:animals}
-\textbf{\refstepcounter{figure}\label{fig:02} Figure \arabic{figure}.}{Contrast beween two lines whose disease score was four. Red vertical line indicates the date senescence on Flag leaf was first seen}
+    \caption{Contrast beween two lines whose disease score was four. Red vertical line indicates the date senescence on Flag leaf was first seen}\label{fig3}
+%\textbf{\refstepcounter{figure}\label{fig:03} Figure \arabic{figure}.}{Contrast beween two lines whose disease score was four. Red vertical line indicates the date senescence on Flag leaf was first seen}
 \end{figure}
 
 
