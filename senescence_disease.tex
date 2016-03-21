@@ -26,7 +26,7 @@
 
 \def\keyFont{\fontsize{8}{11}\helveticabold }
 \def\firstAuthorLast{Camargo {et~al.}} %use et al only if is more than 1 author
-\def\Authors{Anyela V Camargo\,$^{1,*}$, Jan T Kim\,$^{2}$}
+\def\Authors{Anyela V Camargo\,$^{1,*}$, Other\,$^{2}$}
 % Affiliations should be keyed to the author's name with superscript numbers and be listed as follows: Laboratory, Institute, Department, Organization, City, State abbreviation (USA, Canada, Australia), and Country (without detailed address information such as city zip codes or street names).
 % If one of the authors has a change of address, list the new address below the correspondence details using a superscript symbol and use the same symbol to indicate the author in the author list.
 \def\Address{$^{1}$National Plant Phenomics Centre, IBERS, Aberyswyth University, Gogerddan, Aberystwyth, SY23 3EB, UK\\
@@ -78,18 +78,18 @@ We have used a data integrative approach to screen a large population of wheat p
 The eight-parent MAGIC population described by \cite{Mackay01092014} was used for all phenotypic screening. Briefly, the complete population consists of more than >1000 lines generated from three rounds of inter-crossing between eight elite United Kingdom wheat varieties (Alchemy, Brompton, Claire, Hereward, Rialto, Robigus, Soissons, Xi19) followed by five rounds of selfing to remove heterozygosity. 
 
 \subsection{Glass House Cultivation}
-An experiment with duration of six weeks was conducted between mid January 2015 and mid April 2015 in The National Plant Phenomics Centre greenhouse facilities in Aberystwyth, UK. The MAGIC parents as well as 208 lines (see Supporting Information, Table S1) were grown under a well watered conditions with two replicates per genotype. The experiment was designed using randomised blocks (Fig. 1, Table S1).
+An experiment with duration of six weeks was conducted between mid January 2015 and mid April 2015 in The National Plant Phenomics Centre greenhouse facilities in Aberystwyth, UK. The MAGIC parents as well as 208 lines (see Supporting Information, Table S1) were grown under a well watered conditions with two replicates per genotype. 
 
-Single plants were grown in ? L plastic containers with ? kg of soil (content ?). N number of seeds? seeds per pot were directly sown into the soil and after germination thinned out, leaving one plant per pot. Plants were pre-grown for two weeks in a regular greenhouse and watering was performed manually to allow optimal germination and seedling establishment. Subsequently, the pots were transferred to the “smart house” where each pot was placed onto a cart on a conveyor belt. Every day, pots were weighed and watered automatically to ?\% gravimetric water content (Fig. 2). The experiments were carried out under natural lighting with the temperature in the greenhouse kept at a range between ?°C (night) and ?°C (day).
+Single plants were grown in 15cm sq plastic pots. A number of seeds per pot were directly sown into the soil and after germination thinned out, leaving one plant per pot. Plants were put in vernalisation for nine weeks and later taken to regular greenhouse. Watering was performed manually to allow optimal germination and seedling establishment. Subsequently, the pots were transferred to the “smart house” where each pot was placed onto a cart on a conveyor belt. Every day, pots were weighed and watered automatically to 75\% gravimetric water content (Fig. 2). The experiments were carried out under natural lighting with the temperature in the greenhouse kept at a range between 15°C (night) and 18°C (day).
 
 \subsection{Plant infection}
 Wheat plants were naturally infected with tan spot which is caused by the fungus Pyrenophora tritici-repentis. Pyrenophora tritici-repentis is a necrotrophic plant pathogen of fungal origin Phylum Ascomycota. Tan spot symptoms can be manifested as necrosis, chlorosis or both. The necrosis symptom comprises spots that appear initially as tan-brown flecks and expand into lens-shaped, tan lesions with yellow borders. The chlorosis symptom consists of rapidly expanding yellow areas surrounding lesions on the leaf blades. Lesions may coalesce into large blotches as they age, predisposing leaves to premature senescence.  If infected leaves are moistened, the lesions darken at the center due to formation of conidiophores and conidia of D. tritici-repentis \cite{Singh2009}. 
 \subsection{Disease scoring}
 Tan spot infection was scored manually using the seedling infection type (IT) score shown in Table \ref{Tab:02}. These qualitative IT scores were converted to a numerical scale for all statistical analysis.
 
-\subsection{phenotyping}
+\subsection{Phenotyping}
 Plants were phenotyped from the start of the experiment. Plant images were captured using a LemnaTec 3D Scanalyzer (LemnaTec, GmbH, Wuerselen, Germany). Every day, three RGB pictures (2056×2454 pixels) were taken of each wheat plant, one top view image and two side view images with a 90° horizontal rotation. After background-foreground separation was applied to separate the plant tissue area from the background, pixel numbers per plant were counted and the pixel sum of the three pictures per plant was taken to define the biomass %{projected shoot area. The shoot area measured over time was used to draw growth curves. For each growth curve, curve fitting with a 6th order polynomial was conducted to adjust for possible missing data points and absolute growth rate [dA/dt] and relative growth rate [(dA/dt)/A] were calculated. For each of the three curves the integral was determined and used as a trait in the statistical analysis}. 
-Moreover, six further traits were extracted from the images; caliper length, height, color (as hue angle in the HSI color scheme) and the two parameters shoot area top view and convex hull area to calculate compactness of each plant. At the end of the experiment, barley plants were harvested and above ground biomass, tiller number (TIL), and plant height (HEI) were determined. Fresh biomass was weighed and, subsequently, oven dried to constant weight to determine dry biomass. Water use efficiency (WUE) was calculated by dividing dry biomass at the end of the experiment by the total amount of water added during the four weeks in the “smart house” [mg/g water]. Specific plant weight (SPW) was calculated from the dry weight and the maximum projected shoot area at the end of the experiment. In addition, simple stress indices (SSI) were calculated as follows: SSI = Ts/Tc, where Ts and Tc are the average trait performances of an IL under stress and control conditions, respectively. An overview of trait definitions is given in Table . To avoid bias in the scoring, two diferent people scored the plants  at two different times and scores were averaged. 
+In addition to images, plants were manually scored for when the reached gs39, gs55, gs65 and flag leaf senescence developmental stages. At the end of the experiment, wheat plants were harvested and above ground biomass, tiller number (\textit{TN}), plant height (PH), steam height (SH), top internode length (TIL), first/second/third ear length (1EL,2EL, 3EL), first ear weight (1EW), flag leaf senescence (FLS) and first flag leaf length (1FLL) were determined. Fresh biomass was weighed and, subsequently, oven dried to constant weight to determine dry biomass. Water use efficiency (WUE) was calculated by dividing dry biomass at the end of the experiment by the total amount of water added during the four weeks in the “smart house” [mg/g water]. Specific plant weight (SPW) was calculated from the dry weight and the maximum projected shoot area at the end of the experiment. 
 
 \begin{table}[!t]
 \textbf{\refstepcounter{table}\label{Tab:02} Table \arabic{table}.}{ Infection type score table}\\
@@ -110,7 +110,7 @@ Moreover, six further traits were extracted from the images; caliper length, hei
 Statistical analyses were performed using the R environment \cite{RManual}. 
 
 \section{Results}
-Tan spot resistance was evaluated in the greenhouse by measuring the extent of the necrotic/chlorotic response exhibited by the plant (IT). The evaluation was peformed twice and by a different person two avoid bias in the assessment. When comparing disease scores against the onset of senescence at the Flag Leaf, we found that disease severity was in general directly associated with the onset of senescence. In other words, the more severely affected the plants were the more lilkely they were to start senescence sooner Fig \ref{fig2}. This result is consistent with the way necrotrophic plant pathogens act, they derive nutrients from dead cells. Therefore, promoting senescence in the host by manipulating respective signaling pathways is a mechanism they use to speed up cell death. 
+Tan spot resistance was evaluated in the greenhouse by measuring the extent of the necrotic/chlorotic response exhibited by the plant (IT). To avoid bias in the scoring, two diferent people scored the plants at two different times and scores were averaged. When comparing disease scores against the onset of senescence at the Flag Leaf (FLS), we found that more severly infected plants started senescence earlier that those mildy infected Fig \ref{fig2}. This result is consistent with the way necrotrophic plant pathogens act, they derive nutrients from dead cells. Therefore, promoting senescence in the host by manipulating respective signaling pathways is a mechanism they use to speed up cell death. 
 
 We also found some lines whose disease succesptibility was high (i.e. 4) but whose senescence onset was delay Fig \ref{fig3}. 
 
@@ -147,6 +147,25 @@ Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the da
 %%% There is no need for adding the file termination, as long as you indicate where the file is saved. In the examples below the files (logo1.jpg and logo2.eps) are in the Frontiers LaTeX folder
 %%% If using *.tif files convert them to .jpg or .png
 
+\begin{figure}
+    \begin{center}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{smarthouse.jpg}
+        \caption{Plant watering at gravimetrix level}
+       % \label{fig:tiger}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{scoring.jpg}
+        \caption{Plant scoring for developmental stages}
+        %\label{fig:mouse}
+    \end{subfigure}
+\end{center}
+    \caption{Contrast beween two lines whose disease score was four. Red vertical line indicates the date senescence on Flag leaf was first seen}\label{fig3}
+%\textbf{\refstepcounter{figure}\label{fig:03} Figure \arabic{figure}.}{Contrast beween two lines whose disease score was four. Red vertical line indicates the date senescence on Flag leaf was first seen}
+\end{figure}
+
 
 \begin{figure}[h!]
 \begin{center}
@@ -157,7 +176,7 @@ Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the da
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=10cm]{s_d.png}
+\includegraphics[width=10cm]{flagleafsenescence.png}
 \end{center}
  \caption{Disease severity vs onset of senescence}\label{fig2}
 \end{figure}
@@ -166,14 +185,14 @@ Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the da
 \begin{figure}
     \begin{center}
     \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[width=\textwidth]{fig2a.png}
+        \includegraphics[width=\textwidth]{W8-214112.png}
         \caption{Early senescence, IT = 4}
        % \label{fig:tiger}
     \end{subfigure}
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
     %(or a blank line to force the subfigure onto a new line)
     \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[width=\textwidth]{fig2b.png}
+        \includegraphics[width=\textwidth]{W8-100112.png}
         \caption{Late senescence, IT = 4}
         %\label{fig:mouse}
     \end{subfigure}

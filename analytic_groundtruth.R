@@ -1,7 +1,9 @@
+rm(list=ls()); # Delete files
 source('generic.r')
 
 # Make sure you use ggplot for 2.14
 # Read metadata
+
 
 
 metafilename = 'w8_metadata.csv'; # Read metadata
@@ -52,15 +54,19 @@ plotname_list = list("main" = '', 'x.title' = 'DAS Flag Leaf Senescence',
                      'aes.y' = 'disease_score2');
 
 
-
+# Plot per trait
 for(cname in colnames(data_all)[12:26])
 {
   plotname_list[['aes.x']] = cname;
   plotname_list[['x.title']] = cname; 
   p = create_figure(data_all, plotname_list);
-  #if(readline(cname) == 'q') { break(); }
-  png(paste(cname, '.png'));
+  tname = paste(strsplit(cname, '[.]')[[1]], collapse = '');
+  print(tname)
+  png(paste(tname, '.png', sep=''));
   print(p);
   dev.off();
 }
 
+
+
+## Analysis of color data
