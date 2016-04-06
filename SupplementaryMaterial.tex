@@ -16,12 +16,17 @@
 
 
 \def\keyFont{\fontsize{8}{11}\helveticabold }
-\def\firstAuthorLast{Frontiers} 
-\def\Authors{First Author, Co-Author* and Co-Author}
+\def\firstAuthorLast{Camargo {et~al.}} %use et al only if is more than 1 author
+\def\Authors{Anyela V Camargo\,$^{1,*}$, Other\,$^{2}$}
+% Affiliations should be keyed to the author's name with superscript numbers and be listed as follows: Laboratory, Institute, Department, Organization, City, State abbreviation (USA, Canada, Australia), and Country (without detailed address information such as city zip codes or street names).
+% If one of the authors has a change of address, list the new address below the correspondence details using a superscript symbol and use the same symbol to indicate the author in the author list.
+\def\Address{$^{1}$National Plant Phenomics Centre, IBERS, Aberyswyth University, Gogerddan, Aberystwyth, SY23 3EB, UK\\
+$^{}$ }
 % The Corresponding Author should be marked with an asterisk
-% Provide email of the corresponding author
-\def\corrAuthor{Author Name: }
-\def\corrEmail{email@uni.edu}
+% Provide the exact contact address (this time including street name and city zip code) and email of the corresponding author
+\def\corrAuthor{Anyela V Camargo}
+\def\corrAddress{National Plant Phenomics Centre, IBERS, Aberyswyth University, Gogerddan, Aberystwyth, SY23 3EB, UK}
+\def\corrEmail{avc1@aber.ac.uk}
 
 
 \begin{document}
@@ -29,7 +34,7 @@
 \firstpage{1}
 
 \title[Supplementary Material]{{\helveticaitalic{Supplementary Material}}:
-\\ \helvetica{Article Title}} %Please insert the title of your article here
+\\ \helvetica{Running Title}} %Please insert the title of your article here
 
 \author[\firstAuthorLast ]{\Authors} %This field will be automatically populated
 \correspondance{} %This field will be automatically populated
@@ -46,52 +51,40 @@ Supplementary Material should be uploaded separately on submission. Please inclu
 
 \section{Supplementary Tables and Figures}
 
-\begin{table}[h]
-\textbf{\refstepcounter{table}\label{Tab:01} Supplementary Table \arabic{table}.}{ Enter the caption for your table here.  Repeat as  necessary for each of your tables }
 
-\processtable{ }
-{\begin{tabular}{lllll}\toprule
- & Abstract max. legth (incl. spaces) & Figures or tables & Manuscript max. length \\\midrule
-Clinical Case Study & & & &\\
-Clinical Trial & & & &\\
-Hypothesis and Theory & & & &\\
-Methods & 2000 characters  & 15 & 12000 words \\
-Original Research & & & &\\
-Review & & & &\\
-Technology Report & & & &\\\midrule
-Focused Review & 2000 characters & 5 & 5000 words \\\midrule
-CPC &  1250 characters& 6 & 2500 words  \\\midrule
-Perspective & 1250 characters & 2 & 3000 words  \\
-Mini Review & & & &\\\midrule
-Data Report & None & 2 & 3000 words\\\midrule
-Classification & 1250 characters & 10 & 2000 words \\\midrule
-Editorial & None & None & 1000 words  \\\midrule
-Frontiers Commentary  & & &\\
-General Commentary & None & 1 & 1000 words\\
-Book review & & & \\\midrule
-Opinion   & & &\\
-Specialty Grand Challenge & None & 1 & 2000 words\\
-Field Grand Challenge & & & &\\\botrule
-\end{tabular}}{}
-\end{table}
 
 %%% There is no need for adding the file termination, as long as you indicate where the file is saved. In the examples below the files (logo1.jpg and logo2.eps) are in the Frontiers LaTeX folder
 %%% If using *.tif files convert them to .jpg or .png
 
-\begin{figure}
+\begin{figure}[h!]
 \begin{center}
-\includegraphics[width=15cm]{logo1}% This is a *.jpg file
+\includegraphics[width=10cm]{gs39.png}
 \end{center}
-\textbf{\refstepcounter{figure}\label{fig:01} Supplementary Figure \arabic{figure}.}{ Enter the caption for your figure here.  Repeat as  necessary for each of your figures }
+\textbf{\refstepcounter{figure}\label{fig:01} Supplementary Figure \arabic{figure}.}{ Disease severity vs the time plants reached GS39. Red dots indicate average DAS per disease score}
 \end{figure}
 
-%\begin{figure}
-%\begin{center}
-%\includegraphics[width=3.5cm]{logo2}% This is an *.eps file
-%\end{center}
-% \textbf{\refstepcounter{figure}\label{fig:02} Figure \arabic{figure}.}{ Enter the caption for your figure here.  Repeat as  necessary for each of your figures }
-%\end{figure}
 
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=10cm]{gs55.png}
+\end{center}
+\textbf{\refstepcounter{figure}\label{fig:02} Supplementary Figure \arabic{figure}.}{ Disease severity vs the time plants reached GS55. Red dots indicate average DAS per disease score }
+\end{figure}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=10cm]{gs65.png}
+\end{center}
+\textbf{\refstepcounter{figure}\label{fig:03} Supplementary Figure \arabic{figure}.}{ Disease severity vs the time plants reached GS65. Red dots indicate average DAS per disease score}
+\end{figure}
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=17cm]{corplot.png}
+\end{center}
+\textbf{\refstepcounter{figure}\label{fig:04} Supplementary Figure \arabic{figure}.}{ Correlation between traits}
+\end{figure}
 
 %\bibliographystyle{frontiersinSCNS_ENG_HUMS} %  for Science, Engineering and Humanities and Social Sciences articles, for Humanities and Social Sciences articles please include page numbers in the in-text citations
 %\bibliographystyle{frontiersinHLTH&FPHY} % for Health and Physics articles

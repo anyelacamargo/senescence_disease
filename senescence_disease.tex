@@ -26,7 +26,7 @@
 
 \def\keyFont{\fontsize{8}{11}\helveticabold }
 \def\firstAuthorLast{Camargo {et~al.}} %use et al only if is more than 1 author
-\def\Authors{Anyela V Camargo\,$^{1,*}$, Other\,$^{2}$}
+\def\Authors{Anyela V Camargo\,$^{1,*}$, Jan T Kim\,$^{{2,*}}$}
 % Affiliations should be keyed to the author's name with superscript numbers and be listed as follows: Laboratory, Institute, Department, Organization, City, State abbreviation (USA, Canada, Australia), and Country (without detailed address information such as city zip codes or street names).
 % If one of the authors has a change of address, list the new address below the correspondence details using a superscript symbol and use the same symbol to indicate the author in the author list.
 \def\Address{$^{1}$National Plant Phenomics Centre, IBERS, Aberyswyth University, Gogerddan, Aberystwyth, SY23 3EB, UK\\
@@ -78,7 +78,7 @@ We have used a data integrative approach to screen a large population of wheat p
 The eight-parent MAGIC population described by \cite{Mackay01092014} was used for all phenotypic screening. Briefly, the complete population consists of more than >1000 lines generated from three rounds of inter-crossing between eight elite United Kingdom wheat varieties (Alchemy, Brompton, Claire, Hereward, Rialto, Robigus, Soissons, Xi19) followed by five rounds of selfing to remove heterozygosity. 
 
 \subsection{Glass House Cultivation}
-An experiment with duration of six weeks was conducted between mid January 2015 and mid April 2015 in The National Plant Phenomics Centre greenhouse facilities in Aberystwyth, UK. The MAGIC parents as well as 208 lines (see Supporting Information, Table S1) were grown under a well watered conditions with two replicates per genotype. 
+An experiment  was conducted between mid January 2015 and mid April 2015 in The National Plant Phenomics Centre greenhouse facilities in Aberystwyth, UK. The MAGIC parents as well as 208 lines (see Supporting Information, Table S1) were grown under a well watered conditions with two replicates per genotype. 
 
 Single plants were grown in 15cm sq plastic pots. A number of seeds per pot were directly sown into the soil and after germination thinned out, leaving one plant per pot. Plants were put in vernalisation for nine weeks and later taken to regular greenhouse. Watering was performed manually to allow optimal germination and seedling establishment. Subsequently, the pots were transferred to the “smart house” where each pot was placed onto a cart on a conveyor belt. Every day, pots were weighed and watered automatically to 75\% gravimetric water content (Fig. 2). The experiments were carried out under natural lighting with the temperature in the greenhouse kept at a range between 15°C (night) and 18°C (day).
 
@@ -110,9 +110,13 @@ In addition to images, plants were manually scored for when the reached gs39, gs
 Statistical analyses were performed using the R environment \cite{RManual}. 
 
 \section{Results}
-Tan spot resistance was evaluated in the greenhouse by measuring the extent of the necrotic/chlorotic response exhibited by the plant (IT). To avoid bias in the scoring, two diferent people scored the plants at two different times and scores were averaged. When comparing disease scores against the onset of senescence at the Flag Leaf (FLS), we found that more severly infected plants started senescence earlier that those mildy infected Fig \ref{fig2}. This result is consistent with the way necrotrophic plant pathogens act, they derive nutrients from dead cells. Therefore, promoting senescence in the host by manipulating respective signaling pathways is a mechanism they use to speed up cell death. 
+Tan spot resistance was evaluated in the greenhouse by measuring the extent of the necrotic/chlorotic response exhibited by the plant (IT). To avoid bias in the scoring, two people scored the plants at two time points and scores were averaged. When comparing disease scores against the onset of senescence at the Flag Leaf (FLS), we found that more severly infected plants started senescence earlier that those mildy infected Fig \ref{fig2}. This result is consistent with the way necrotrophic plant pathogens act, they derive nutrients from dead cells. Therefore, promoting senescence in the host by manipulating respective signaling pathways is a mechanism they use to speed up cell death.  
 
-We also found some lines whose disease succesptibility was high (i.e. 4) but whose senescence onset was delay Fig \ref{fig3}. 
+Looking back into the development of the plant prior to senescence, we realised there was also an asociation between the speed at which plants developed and disease severity. Supplementary Figures 1-3 shows plots mapping the date (DAS) at which plants reached GS39, GS55 and GS65 plant developmental stages against their corresponding disease severity score. The trend lines in the plots suggest there was an association between disease severity and the speed at which plants developed. This result is also consistent with the theory that necrotrophic plant pathogens act, they derive nutrients from dead cells. Therefore, promoting senescence in the host by manipulating respective signaling pathways is a mechanism they use to speed up cell death. It's not surprised we found high positive correlations between all three developmental stages and the onset of senescence at the flag leaf (Supplementary Figure 4).
+
+\subsection{RILS}
+
+As well as looking at the whole population, we also identified several RILs who managed to delay senescence despite been severely affected (score four) by the pathogen. Fig \ref{fig3} shows a contrast between two plants highly susceptible to pathogen infection but whose initiation of senescence ocurred at two different times. Fig \ref{fig3}b is a plant severely infected by the pathogen but who manages to delay the start of senescence at the flag leaf. 
 
 
 \section{Discussion}
@@ -132,7 +136,6 @@ Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the da
  We are grateful to the team of “National Plant Phenomics Centre” for carrying out the experiments and to the 
 \textit{Funding\textcolon} for finantially suportting the project.
 
-\section*{Supplemental Data}
 
 
 \bibliographystyle{frontiersinSCNS_ENG_HUMS} % for Science, Engineering and Humanities and Social Sciences articles, for Humanities and Social Sciences articles please include page numbers in the in-text citations
@@ -178,7 +181,7 @@ Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the da
 \begin{center}
 \includegraphics[width=10cm]{flagleafsenescence.png}
 \end{center}
- \caption{Disease severity vs onset of senescence}\label{fig2}
+ \caption{Disease severity vs onset of senescence at the Flag Leaf. Red dots indicate average DAS per disease score}\label{fig2}
 \end{figure}
 
 
