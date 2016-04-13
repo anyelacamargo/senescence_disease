@@ -120,6 +120,6 @@ rils = data.frame(t(v), t(R));
 colnames(rils) = c('genotype', as.vector(rils_raw_clean$Marker));
 
 rildata = merge(phenodata[,c(1,17)], rils, by.x='genotype', by.y='genotype');
-write.table(rildata, file='rildisease.ped', sep=' ', quote = FALSE, row.names = FALSE, row.names = FALSE);
-write.table(rils, file='rildisease1.ped', sep=' ', quote = FALSE, row.names = FALSE, row.names = FALSE);
+write.table(rildata, file='rildisease.ped', sep=' ', quote = FALSE, row.names = FALSE, col.names = FALSE);
+write.table(rils, file='rildisease1.ped', sep=' ', quote = FALSE, row.names = FALSE, col.names = FALSE);
 g2a(mapfounder, ".alleles");
