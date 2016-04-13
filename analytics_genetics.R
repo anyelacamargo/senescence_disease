@@ -77,6 +77,9 @@ phenodata = read.table('wheat_pheno.csv', header=TRUE, sep=',');
 founders_raw = read.table('founders.geno.csv', header=T, sep=',');
 #rils
 rils_raw = read.table('wheat_geno.csv', header=T, sep=',');
+# map
+map_raw = read.table('wheat_geno_coordinates.csv', sep=',', header=TRUE);
+
 
 # Process founders
 colnames(founders_raw);
@@ -91,23 +94,28 @@ i = which(flag == 0);
 nonpolymarkers = founders_raw$X13074[i];
 
 
+
 # Convert 
 founders_raw = founders_raw[-i, ];
 F <- apply(founders_raw[,9:clf],2, convert.snp1);
 founders = data.frame(colnames(founders_raw)[9:clf], t(F));
 colnames(founders) = c('genotype', as.vector(founders_raw$X));
 
+# map x founder
+
+mapfounder = merge(map_raw, founders_raw, by.x = 'Marker', by.y='X13074');
+
 # Rils
 # delete poly markers
-o = match(nonpolymarkers,rils_raw$original.order);
-rils_raw = rils_raw[-o,];
-clr = ncol(rils_raw); 
-rr = nrow(rils_raw);# Cols dataframe
-R <- apply(rils_raw[3:rr,3:clr],2, convert.snp2);
-v = as.vector(rils_raw[2, 3:clr]);
+colnames(rils_raw)
+rils_raw_clean = merge(mapfounder[,1:2], rils_raw, by.x='Marker', by.y='original.order');
+clr = ncol(rils_raw_clean); 
+rr = nrow(rils_raw_clean);# Cols dataframe
+R <- apply(rils_raw_clean[,4:clr],2, convert.snp2);
+v = as.vector(rils_raw[2, 3:(clr-1)]);
 rils = data.frame(t(v), t(R));
-colnames(rils) = c('genotype', as.vector(rils_raw$original.order[3:rr]));
+colnames(rils) = c('genotype', as.vector(rils_raw_clean$Marker));
 
 rildata = merge(phenodata[,c(1,17)], rils, by.x='genotype', by.y='genotype');
-write.table(rildata, file='rildisease.ped', sep=' ', quotes=F, row.names = FALSE);
-
+write.table(rildata, file='rildisease.ped', sep=' ', quote = FALSE, row.names = FALSE);
+a <- g2a(mapfounder, ".alleles");

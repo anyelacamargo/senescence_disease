@@ -5,24 +5,24 @@ alleleLine <- function(a, n)
 }
 
 
-alleleBlock <- function(s, markerName)
+alleleBlock <- function(s, markerName, cM)
 {
-  a0 <- as.numeric(s <= 1);
-  a1 <- as.numeric(s >= 1);
-  if (sum(a0) == 0)
+  b= c();
+  alleles <- unique(s);
+  if(length(alleles) == 1) 
   {
-    b <- sprintf("# marker %s: no founder in state 0", markerName);
-  }
-  else if (sum(a1) == 0)
-  {
-    b <- sprintf("# marker %s: no founder in state 1", markerName);
+    b <- sprintf("# marker %s: no polymorphic", markerName);
+    return(b);
   }
   else
   {
-    b <- sprintf("marker %s", markerName);
-    b <- c(b, alleleLine(rep(1, length(s)), "NA"));
-    b <- c(b, alleleLine(a0, "0"));
-    b <- c(b, alleleLine(a1, "1"));
+    b <- sprintf("marker %s %d %f", markerName, length(alleles), cM);
+    for (m in alleles)
+    {
+      an = as.numeric(s == m);
+      b <- c(b, alleleLine(an, m));
+      
+    }
   }
   return(b);
 }
@@ -30,9 +30,10 @@ alleleBlock <- function(s, markerName)
 
 g2a <- function(gfname, aBasename)
 {
-  gAll <- read.table(gfname, header = TRUE, stringsAsFactors = FALSE, sep=',');
+  #gAll <- read.table(gfname, header = TRUE, stringsAsFactors = FALSE, sep=',');
+  gAll = gfname;
   chrNameList <- unique(gAll$pos);
-  founderNames <- colnames(gAll)[9:ncol(gAll)];
+  founderNames <- colnames(gAll)[12:ncol(gAll)];
   aList <- list();
   for (chrName in chrNameList)
   {
@@ -43,8 +44,9 @@ g2a <- function(gfname, aBasename)
     {
       markerName <- g[i, "X"];
       s <- as.numeric(g[i, founderNames]);
+      cM = as.numeric(g[i, 'cM'])
       names(s) <- founderNames;
-      a <- c(a, alleleBlock(s, markerName));
+      a <- c(a, alleleBlock(s, markerName, cM));
     }
     afname <- sprintf("chr%s%s", chrName, aBasename);
     write(a, afname);
@@ -53,4 +55,4 @@ g2a <- function(gfname, aBasename)
   return(invisible(aList));
 }
 
-a <- g2a("founders.geno.csv", ".alleles");
+
