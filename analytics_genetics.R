@@ -65,10 +65,11 @@ searchPolym = function(data)
 {
   
   profile = data;
-  #print(profile)
-  a0 <- as.numeric(profile <= 1);
-  a1 <- as.numeric(profile >= 1);
-  if(mean(a0) == 1 | mean(a1) == 1) { return(0)}
+  alleles = unique(profile);
+  if(length(alleles) == 1) 
+  {
+    return(0);
+  }
   else {return(1)};
 }
 
@@ -109,7 +110,7 @@ mapfounder = merge(map_raw, founders_raw, by.x = 'Marker', by.y='X13074');
 
 # Rils
 # delete poly markers
-colnames(rils_raw)
+colnames(rils_raw);
 rils_raw_clean = merge(mapfounder[,1:2], rils_raw, by.x='Marker', by.y='original.order');
 clr = ncol(rils_raw_clean); 
 rr = nrow(rils_raw_clean);# Cols dataframe
@@ -119,6 +120,6 @@ rils = data.frame(t(v), t(R));
 colnames(rils) = c('genotype', as.vector(rils_raw_clean$Marker));
 
 rildata = merge(phenodata[,c(1,17)], rils, by.x='genotype', by.y='genotype');
-write.table(rildata, file='rildisease.ped', sep=' ', quote = FALSE, row.names = FALSE);
-write.table(rils, file='rildisease1.ped', sep=' ', quote = FALSE, row.names = FALSE);
+write.table(rildata, file='rildisease.ped', sep=' ', quote = FALSE, row.names = FALSE, row.names = FALSE);
+write.table(rils, file='rildisease1.ped', sep=' ', quote = FALSE, row.names = FALSE, row.names = FALSE);
 g2a(mapfounder, ".alleles");
