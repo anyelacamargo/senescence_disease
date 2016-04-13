@@ -1,7 +1,8 @@
-source('genohack.R');
+
 # This script does QTL mapping 
 rm(list=ls()); # Delete files
 cat("\014");
+source('genohack.R');
 #library(mpMap)
 
 runmpMap = function()
@@ -119,4 +120,5 @@ colnames(rils) = c('genotype', as.vector(rils_raw_clean$Marker));
 
 rildata = merge(phenodata[,c(1,17)], rils, by.x='genotype', by.y='genotype');
 write.table(rildata, file='rildisease.ped', sep=' ', quote = FALSE, row.names = FALSE);
+write.table(rils, file='rildisease1.ped', sep=' ', quote = FALSE, row.names = FALSE);
 g2a(mapfounder, ".alleles");
