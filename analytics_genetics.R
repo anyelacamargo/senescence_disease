@@ -126,7 +126,7 @@ g2a(mapfounder, ".alleles");
 
 c = ncol(rils_raw);
 g = t(rils_raw[1:2,3:c]);
-k = merge(g, phenodata, by.x='2', by.y='genotype');
+k = merge(g, phenodata[,c(1, 17)], by.x='2', by.y='genotype');
 k = k[,-1];
 colnames(k)[1] = 'SUBJECT.NAME';
-write.table(k, file='wheat.phenotype', sep='\t', quote = FALSE, row.names = FALSE, col.names = FALSE);
+write.table(k, file='wheat.phenotype', sep='\t', quote = FALSE, row.names = FALSE);
