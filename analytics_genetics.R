@@ -123,3 +123,10 @@ rildata = merge(phenodata[,c(1,17)], rils, by.x='genotype', by.y='genotype');
 write.table(rildata, file='rildisease.ped', sep=' ', quote = FALSE, row.names = FALSE, col.names = FALSE);
 write.table(rils, file='rildisease1.ped', sep=' ', quote = FALSE, row.names = FALSE, col.names = FALSE);
 g2a(mapfounder, ".alleles");
+
+c = ncol(rils_raw);
+g = t(rils_raw[1:2,3:c]);
+k = merge(g, phenodata, by.x='2', by.y='genotype');
+k = k[,-1];
+colnames(k)[1] = 'SUBJECT.NAME';
+write.table(k, file='wheat.phenotype', sep='\t', quote = FALSE, row.names = FALSE, col.names = FALSE);
