@@ -107,7 +107,7 @@ In addition to images, plants were manually scored for when the reached gs39, gs
 
 
 \subsection{Statistical Analysis}
-Statistical analyses were performed using the R environment \cite{RManual}. 
+Statistical analyses were performed using the R environment \cite{RManual}. QTL Mapping was done using the HAPPY package from the R environment \cite{Mott07112000}.
 
 \section{Results}
 Tan spot resistance was evaluated in the greenhouse by measuring the extent of the necrotic/chlorotic response exhibited by the plant (IT). To avoid bias in the scoring, two people scored the plants at two time points and scores were averaged. When comparing disease scores against the onset of senescence at the Flag Leaf (FLS), we found that more severly infected plants started senescence earlier that those mildy infected Fig \ref{fig2}. This result is consistent with the way necrotrophic plant pathogens act, they derive nutrients from dead cells. Therefore, promoting senescence in the host by manipulating respective signaling pathways is a mechanism they use to speed up cell death.  
@@ -119,9 +119,13 @@ Looking back into the development of the plant prior to senescence, we realised 
 As well as looking at the whole population, we also identified several RILs who managed to delay senescence despite been severely affected (score four) by the pathogen. Fig \ref{fig3} shows a contrast between two plants highly susceptible to pathogen infection but whose initiation of senescence ocurred at two different times. Fig \ref{fig3}b is a plant severely infected by the pathogen but who manages to delay the start of senescence at the flag leaf. 
 
 
+\subsection{QTLS}
+
+As well as looking at the whole population, we also identified several RILs who managed to delay senescence despite been severely affected (score four) by the pathogen. Fig \ref{fig3} shows a contrast between two plants highly susceptible to pathogen infection but whose initiation of senescence ocurred at two different times. Fig \ref{fig3}b is a plant severely infected by the pathogen but who manages to delay the start of senescence at the flag leaf. 
+
 \section{Discussion}
 
-
+Fig. \ref{fig4}
 
 \section*{Disclosure/Conflict-of-Interest Statement}
 
@@ -130,7 +134,7 @@ The authors declare that the research was conducted in the absence of any commer
 
 \section*{Author Contributions}
 
-Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the data: AVC JTK. Contributed with seed: AB. Wrote the paper: AVC JTK. Provided comments and corrected the manuscript: ALL.
+Conceived and designed the study: AVC/AB. Performed the study: AVC. Analyzed the data: AVC JTK. Contributed with seed: AB. Wrote the paper: AVC JTK. Provided comments and corrected the manuscript: ALL.
 
 \section*{Acknowledgments}
  We are grateful to the team of “National Plant Phenomics Centre” for carrying out the experiments and to the 
@@ -202,6 +206,35 @@ Conceived and designed the study: AVC. Performed the study: AVC. Analyzed the da
 \end{center}
     \caption{Contrast beween two lines whose disease score was four. Red vertical line indicates the date senescence on Flag leaf was first seen}\label{fig3}
 %\textbf{\refstepcounter{figure}\label{fig:03} Figure \arabic{figure}.}{Contrast beween two lines whose disease score was four. Red vertical line indicates the date senescence on Flag leaf was first seen}
+\end{figure}
+
+
+\begin{figure}
+    \begin{center}
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\textwidth]{gs39_qtl.png}
+        \caption{}
+       % \label{fig:tiger}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\textwidth]{otherearweith_qtl.png}
+        \caption{}
+       % \label{fig:tiger}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\textwidth]{thirdearlength_qtl.png}
+        \caption{}
+        %\label{fig:mouse}
+    \end{subfigure}
+\end{center}
+    \caption{QTLs hits for the taits gs39, other.ear.wieight and third.ear.length}\label{fig4}
+%\textbf{\refstepcounter{figure}\label{fig:03} Figure \arabic{figure}.}{Contrast beween two lines whose disease score was four. Red vertical line indicates the date senescence on Flag leaf was first seen}
+
+
 \end{figure}
 
 
