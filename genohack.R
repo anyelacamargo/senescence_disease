@@ -1,6 +1,6 @@
 alleleLine <- function(a, n)
 {
-  v <- a / sum(a);
+  v <- round(a / sum(a), 4);
   return(sprintf("allele %s %s", n, paste(as.character(v), collapse = " ")));
 }
 
@@ -61,7 +61,7 @@ g2a <- function(gfname, aBasename)
   gAll = gfname;
   chrNameList <- unique(gAll$pos);
   
-  founderNames <- colnames(gAll)[12:ncol(gAll)];
+  founderNames <- colnames(gAll)[11:ncol(gAll)];
   aList <- list();
   for (chrName in chrNameList)
   {
