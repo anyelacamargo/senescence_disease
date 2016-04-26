@@ -1,5 +1,5 @@
 
-# This script does QTL mapping 
+# This script prepares data for QTL mapping
 rm(list=ls()); # Delete files
 cat("\014");
 source('genohack.R');
@@ -43,7 +43,7 @@ searchPolym = function(data)
 }
 
 
-process_founders = function(datafounder, datamap, kw){
+process_founders = function(datafounder, mapdata, kw){
 
   
   colnames(datafounder);
@@ -61,7 +61,7 @@ process_founders = function(datafounder, datamap, kw){
   F <- apply(datafounder[,9:clf],2, convert.snp1);
   founders = data.frame(colnames(datafounder)[9:clf], t(F));
   colnames(founders) = c('genotype', as.vector(datafounder$X));
-  mapfounder = merge(map_raw, datafounder, by.x = 'Marker', by.y=kw);
+  mapfounder = merge(mapdata, datafounder, by.x = 'Marker', by.y=kw);
   return(mapfounder);
   
 }
@@ -83,6 +83,7 @@ process_rils = function(data, map_raw)
 
 create_phenodata = function(phenotable, riltable)
 {
+  
   c = ncol(riltable);
   g = t(riltable[1:2,3:c]);
   k = merge(g, phenotable, by.x='2', by.y='genotype');
@@ -99,23 +100,30 @@ create_pedfile = function()
   write.table(rils, file='rildisease1.ped', sep=' ', quote = FALSE, row.names = FALSE, col.names = FALSE);
 }
 
-# phenodata
-phenodata = read.table('wheat_pheno.csv', header=TRUE, sep=',');
-# Founders
-founders_raw = read.table('founders.geno.csv', header=T, sep=',');
-#rils
-rils_raw = read.table('wheat_geno.csv', header=T, sep=',');
-# map
-map_raw = read.table('wheat_geno_coordinates.csv', sep=',', header=TRUE);
-# map x founder
-mapfounder = process_founders(founders_raw, map_raw, 'X13074');
 
-# Process Rils
-#rils = process_rils(rils_raw);
+get_MAGIC = function(phenofile, foundersgenofile, rildgenofile, mapfile)
+{
+  #phenodata
+  pheno_raw = read.table(phenofile, header=TRUE, sep=',');
+  # foundersdata
+  founders_raw = read.table(foundersgenofile, header=T, sep=',');
+  #rilsdata
+  rils_raw = read.table(rildgenofile, header=T, sep=',');
+  # map
+  map_raw = read.table(mapfile, sep=',', header=TRUE);
+  # map x founder
+  mapfounder = process_founders(founders_raw, map_raw, 'X13074');
+    #create allele file
+  phenodata = create_phenodata(pheno_raw, rils_raw);
+  mapfounder = data.frame(mapfounder, chromosome= sapply(mapfounder$Chr, function(x) paste('chr', x, sep='')));
+  mapfounder = mapfounder[,c(1,20,3,2, 6:19)];
+  write.table(mapfounder[,c(1:3)],file='map.wheat.txt', sep='\t', quote = FALSE, row.names = FALSE);
+  write.table(phenodata,file='wheat.phenotype', sep='\t', quote = FALSE, row.names = FALSE);
+  g2a(mapfounder, ".wheat.alleles");
+  return(mapfounder);
+}
 
-#create allele file
-g2a(mapfounder, ".alleles");
 
-#create phenofile
-phenodata = create_phenodata(phenodata, rils_raw);
-write.table(phenodata,file='wheat.phenotype', sep='\t', quote = FALSE, row.names = FALSE);
+mapfounder = get_MAGIC('wheat_pheno.csv', 'founders.geno.csv','wheat_geno.csv','wheat_geno_coordinates.csv'); 
+
+
