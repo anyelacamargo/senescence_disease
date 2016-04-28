@@ -104,26 +104,34 @@ create_pedfile = function()
 get_MAGIC = function(phenofile, foundersgenofile, rildgenofile, mapfile)
 {
   #phenodata
-  pheno_raw = read.table(phenofile, header=TRUE, sep=',');
+  f = list()
+  f$pheno_raw = read.table(phenofile, header=TRUE, sep=',');
   # foundersdata
-  founders_raw = read.table(foundersgenofile, header=T, sep=',');
+  f$founders_raw = read.table(foundersgenofile, header=T, sep=',');
   #rilsdata
-  rils_raw = read.table(rildgenofile, header=T, sep=',');
+  f$rils_raw = read.table(rildgenofile, header=T, sep=',');
   # map
-  map_raw = read.table(mapfile, sep=',', header=TRUE);
+  f$map_raw = read.table(mapfile, sep=',', header=TRUE);
+  
+  f$founders_raw = merge(f$map_raw[,1:2], f$founders_raw, by.y='X13074', by.x='Marker');
+  f$founders_raw = founders_raw[,c(3,4,2,6:8,1, 9:17)];
+  colnames(f$founders_raw)[3] = 'pos';
+  colnames(f$founders_raw)[7] = 'X13074';
+  
   # map x founder
-  mapfounder = process_founders(founders_raw, map_raw, 'X13074');
+  f$mapfounder = process_founders(f$founders_raw, f$map_raw, 'X13074');
     #create allele file
-  phenodata = create_phenodata(pheno_raw, rils_raw);
-  mapfounder = data.frame(mapfounder, chromosome= sapply(mapfounder$Chr, function(x) paste('chr', x, sep='')));
-  mapfounder = mapfounder[,c(1,20,3,2, 6:19)];
-  write.table(mapfounder[,c(1:3)],file='map.wheat.txt', sep='\t', quote = FALSE, row.names = FALSE);
-  write.table(phenodata,file='wheat.phenotype', sep='\t', quote = FALSE, row.names = FALSE);
-  g2a(mapfounder, ".wheat.alleles");
-  return(mapfounder);
+  f$phenodata = create_phenodata(f$pheno_raw, f$rils_raw);
+  f$mapfounder = data.frame(f$mapfounder, chromosome= sapply(f$mapfounder$Chr, function(x) paste('chr', x, sep='')));
+  f$mapfounder = f$mapfounder[,c(1,20,3,2, 6:19)];
+  write.table(f$mapfounder[,c(1:3)],file='map.wheat.txt', sep='\t', quote = FALSE, row.names = FALSE);
+  write.table(f$phenodata,file='wheat.phenotype', sep='\t', quote = FALSE, row.names = FALSE);
+  write.table(f$founders_raw,file='founders.geno2.txt', sep=' ', quote = FALSE, row.names = FALSE);
+  #g2a(f$mapfounder, ".wheat.alleles");
+  return(f);
 }
 
 
-mapfounder = get_MAGIC('wheat_pheno.csv', 'founders.geno.csv','wheat_geno.csv','wheat_geno_coordinates.csv'); 
+f = get_MAGIC('wheat_pheno.csv', 'founders.geno.csv','wheat_geno.csv','wheat_geno_coordinates.csv'); 
 
 
