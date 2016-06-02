@@ -1,0 +1,2 @@
+phenotype	chromosome	island.from.bp	island.to.bp	peak.bp	peak.SNP	logP	genomewide.pvalue
+SH	chr4D	NA	3600001	3500001	RAC875_rep_c105718_304	4.71234591388713	0.032

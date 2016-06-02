@@ -6,6 +6,21 @@ source('genohack.R');
 #library(mpMap)
 library(xtable)
 
+createQTLTable = function(mapdata)
+{
+  
+  files <- list.files(pattern = "qtls");
+  myfiles = do.call(rbind, lapply(files, 
+                                  function(x) read.table(x, stringsAsFactors = TRUE, header=T)));
+  
+  h = merge(myfiles, mapdata, by.x='peak.SNP', by.y='Marker');
+  h = h[order(h$phenotype,h$chromosome),];
+  h$logP = round(h$logP,2);
+  h$genomewide.pvalue = round(h$genomewide.pvalue,2);
+  h$cM = round(h$cM,2);
+  return(h);
+}
+
 # Convert SNPs
 convert.snp1 <- function(x) {
   #convert to {-1,0,1,NA}
@@ -132,20 +147,11 @@ get_MAGIC = function(phenofile, foundersgenofile, rildgenofile, mapfile)
   return(f);
 }
 
-createQTLTable = function()
-{
-  files <- list.files(pattern = "qtls");
-  myfiles = do.call(rbind, lapply(files, 
-                                  function(x) read.table(x, stringsAsFactors = TRUE, header=T)));
-  
-  print(xtable(myfiles[,c(-3:-5)]), 
-        type='latex', file='qtltable.tex')
-  
-  
-}
+
 
 
 
 f = get_MAGIC('wheat_pheno.csv', 'founders.geno.csv','wheat_geno.csv','wheat_geno_coordinates.csv'); 
 
-
+t = createQTLTable(f$map_raw);
+write.table(t[,c(2,1,9,10,7,8)], file='qtltable.csv', sep=',', row.names = F);
