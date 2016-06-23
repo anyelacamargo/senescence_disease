@@ -1,3 +1,0 @@
-phenotype	chromosome	island.from.bp	island.to.bp	peak.bp	peak.SNP	logP	genomewide.pvalue
-GS55	chr5A	34800001	57200001	57500001	wsnp_Ex_rep_c66689_65011117	8.84523390347972	0
-GS55	chr5A	16100001	55800001	54600001	wsnp_Ex_c5978_10478584	5.23476739245955	0.01

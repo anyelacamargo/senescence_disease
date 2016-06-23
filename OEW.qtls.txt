@@ -1,2 +1,0 @@
-phenotype	chromosome	island.from.bp	island.to.bp	peak.bp	peak.SNP	logP	genomewide.pvalue
-OEW	chr1A	39400001	36700001	17800001	Excalibur_c9196_313	4.21918841765933	0.06
