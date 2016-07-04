@@ -3,7 +3,7 @@
 rm(list=ls()); # Delete files
 cat("\014");
 source('genohack.R');
-library('mpMap')
+#ibrary('mpMap')
 library(rrBLUP)
 
 # Convert SNPs
@@ -216,12 +216,12 @@ transform_wheatgeno = function()
   markers = cbind(markername,R);
   m = rbind(cn, mn, c('',genotypename1), markers);
   
-  write.table(m, file='wheat_pheno_alt.csv', sep=',', quote=F, row.names=F)
+  write.table(m, file='wheat_geno_alt.csv', sep=',', quote=F, row.names=F)
 }
 
 
 #f = get_MAGIC('wheat_pheno.csv', 'founders.geno.csv','wheat_geno.csv','wheat_geno_coordinates.csv'); 
-phenofile = 'wheat_pheno.csv';
+phenofile = 'wheat_phenoS.csv';
 foundersgenofile = 'founders.geno.csv';
 rildgenofile = 'wheat_geno.csv';
 mapfile = 'wheat_geno_coordinates.csv';
@@ -246,11 +246,11 @@ peddata$id = as.numeric(peddata$id);
 peddata$mother = as.numeric(peddata$mother);
 peddata$father = as.numeric(peddata$father);
 k = match(parents$mapfounder$Marker, colnames(rils$rildataH)[2:ncol(rils$rildataH)]);
-break();
+
 writefiles(parents$mapfounder[,c('Marker', 'chromosome', 'cM' )], parents$mapfounder[,c(1,5:12)],
                       rils$rildataH[,c(1,k+1)], phenodata, founders_raw, peddata[,2:4], map_raw[,c(1,3,2)]);
 
-
+break();
 # Check for population structure
 p = check_PStruct(t(rils$R));
 png('PCA_PS.png', width = 1600, height = 1600,res=200);
