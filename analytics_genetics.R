@@ -254,7 +254,7 @@ break();
 # Check for population structure
 p = check_PStruct(t(rils$R));
 png('PCA_PS.png', width = 1600, height = 1600,res=200);
-plot(lambda/sum(lambda),ylab="Fraction Explained")
+plot(p/sum(p),ylab="Fraction Explained", xlab='RILs')
 dev.off()
 
 # Create mpcrop object

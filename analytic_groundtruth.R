@@ -120,7 +120,7 @@ averageValues = function(data)
   copydata = data;
   
   copydata = aggregate(cbind(TC, GS39, GS55, GS65, FLS, PW, SH, TIL, TN, FEL, SEL, TEL, FFLL, 
-                      FEW, OEW, SM, NANTH) ~ genotype + type, data = copydata, FUN= "mean", na.action = na.pass);
+                      FEW, OEW, SM) ~ genotype + type, data = copydata, FUN= "mean", na.action = na.pass);
   return(copydata);
 }
 
@@ -142,7 +142,7 @@ plotPCA = function(data)
   copydata = data;
   rownames(copydata) = c(as.character(dtaM$genotype[1:12]), as.character(13:nrow(copydata)));
  
-  res <- PCA(copydata[,2:ncol(copydata)], graph=F, quali.sup=c(1), scale.unit=TRUE);
+  res <- PCA(copydata[,c(2, 4:ncol(copydata))], graph=F, quali.sup=c(1), scale.unit=TRUE);
   pdf('PCARes.pdf');
   plot.PCA(res, axes=c(1, 2), choix="ind")
   plot(res, choix = "var", cex=0.9, label='var',  col.var = rainbow(10), 
@@ -244,33 +244,36 @@ dta_avg = averageValues(dta_imp$copydata);
 
 dtaM = createRatios(dta_avg);
 write.table(dtaM[,c(1,19)], file='wheat_phenoS.csv', sep=',', row.names = F);
-break();
+
 # Plot correlations
 tiff('corplot.tiff',  width = 1980, height = 1580,res=200);
-pairs.panels(dtaM[,3:21]) 
+pairs.panels(dtaM[,4:21]) 
 dev.off();
 
-
+break()
 # Plot scatter plots
 genotypes = c(as.character(dtaM$genotype[1:12]), rep('RIL', nrow(dtaM)-12));
 FFLL= c(dtaM$FFLL[1:12]/100, dtaM$FFLL[13:nrow(dtaM)]/100);
 
-tiff('r1vsr3.tiff', width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$r1, dtaM$r3, dtaM, FFLL, genotypes, 'r1', 'r3', 'FFLL')
+
+tiff('r1vsFLS.tiff', width = 1080, height = 1080,res=200);
+p = plotDiagrams(dtaM$r1, dtaM$FLS, dtaM, FFLL, genotypes, 'r1', 'FLS', 'FFLL')
 print(p);
 dev.off();
 
+FLS= c(dtaM$FLS[1:12]/100, dtaM$FLS[13:nrow(dtaM)]/100);
 tiff('r2vsr3.tiff',  width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$r2, dtaM$r3, dtaM, FFLL, genotypes, 'r2', 'r3', 'FFLL')
+p = plotDiagrams(dtaM$r2, dtaM$r3, dtaM, FLS, genotypes, 'r2', 'r3', 'FLS')
 print(p);
 dev.off();
 
 genotypes = c(as.character(dtaM$genotype[1:12]), rep('RIL', nrow(dtaM)-12));
 SM= c(dtaM$SM[1:12]/10, dtaM$SM[13:nrow(dtaM)]/10);
-tiff('r1vsr3SM.tiff',  width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$r1, dtaM$r3, dtaM, SM, genotypes, 'r1', 'r3', 'SM');
+tiff('r3vsFLS.tiff',  width = 1080, height = 1080,res=200);
+p = plotDiagrams(dtaM$r3, dtaM$FLS, dtaM, SM, genotypes, 'r3', 'FLS', 'SM');
 print(p);
 dev.off();
+
 
 # fit model
 
@@ -281,15 +284,15 @@ fitmodel(dtaM)
 plotPCA(dtaM);
 
 # Plot histograms
-png('histrait.pdf', width = 1600, height = 1600,res=200);
-plotHist(dtaM, colnames(dtaM)[3:21], c(4,5));
+png('histrait.tiff', width = 1600, height = 1600,res=200);
+plotHist(dtaM, colnames(dtaM)[4:21], c(4,5));
 dev.off();
 
 pdf('histrait.pdf', width = 600, height = 600);
-plotHist(dtaM, colnames(dtaM)[3:21], c(4,5));
+plotHist(dtaM, colnames(dtaM)[4:21], c(4,5));
 dev.off();
 
-png('selectedtraits.png', width = 1600, height = 1600,res=200);
+png('selectedtraits.tiff', width = 1600, height = 1600,res=200);
 plotHist(dtaM, colnames(dtaM)[c(5,7,9, 21)], c(2,2));
 dev.off();
 
@@ -297,8 +300,9 @@ dev.off();
 #clusplot(dtaM[,3:21], fit$cluster, color=TRUE, shade=TRUE,          labels=2, lines=0)
 barcol = c(rep('blue',9), 'red','blue', 'blue');
 
-png('barplotParentsFLS.png', width = 60, height = 600,res=200);
+png('barplotParentsFLS.png', width = 1000, height = 600,res=200);
 barplot(dtaM$FLS[1:12], names.arg = dtaM$genotype[1:12], las=2, 
-        cex.names = 0.7, col=barcol, ylab = 'FLS DAS')
+        cex.names = 0.7, col=barcol, ylab = 'FLS DAS', 
+        ylim = c(0,300))
 dev.off();
 dev.off()
