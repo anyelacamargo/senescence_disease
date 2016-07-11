@@ -9,6 +9,48 @@ library('mice');
 library('psych');
 
 
+calculatePvalue = function(data)
+{
+  l = list();
+  pop2Mean = data;
+  l$ccpop2Mean = cor(pop2Mean)
+  numcol = ncol(pop2Mean);
+  l$pvaluep2Mean = l$ccpop2Mean;
+  
+  for(i in 1:numcol)
+  {
+    for(j in 1:numcol)
+    {
+      l$pvaluep2Mean[i,j] <- cor.test(pop2Mean[,i],pop2Mean[,2],method= "spearman")$p.value;
+    }
+  }
+  
+  l$ccpop2Mean[l$pvaluep2Mean > 0.05] = NA;
+  return(l);
+}
+
+
+
+
+
+
+writeHeatMatp <- function(data, pval, ftitle, colna, labnames, ks)
+{
+  copydata <- data
+  heatmap.2(as.matrix(copydata), 
+            key=T, keysize=ks,key.ylab=NA,density.info="none",
+            col=bluered(256),na.color=colna,sepcolor='black',
+            labRow=labnames,labCol=labnames,
+            cellnote = round(as.matrix(pval),2), notecex= 0.6, cexRow= 0.9, cexCol = 0.9,
+            trace="none",  notecol="black", main=ftitle, 
+            Rowv=FALSE, 
+            Colv=FALSE,
+            #dendrogram=c("col"), 
+            symbreaks=T, scale="none" 
+  );
+  
+}
+
 imputeData = function(data)
 {
   copydata = data;
@@ -41,7 +83,7 @@ replaceImputedValue = function(data, trait_list)
 fitmodel = function(data)
 {
   copydata = data;
-  f = aov(FLS ~ GS39 + GS55 + GS65 +r1 + r2 + r3 +PW+SH+TIL+TN+FEL+SEL+TEL+FFLL+FEW+OEW+SM, data = copydata);
+  f = aov(FLS ~ GS39 + GS55 + GS65 +d1 + d2 + d3 +PW+SH+TIL+TN+FEL+SEL+TEL+FFLL+FEW+OEW+SM, data = copydata);
   print(summary(f));
 }
 
@@ -82,12 +124,15 @@ plotforDisease = function(data)
 
 plotDiagrams = function(v1, v2, dataset, trait, genotypes, xl, yl, traitname)
 {
+  cd = c("blue", "red","gray", 'green4', 'black', 'yellow', 'purple', 'brown', 'deepskyblue1', 
+         'coral1', 'green', 'magenta1',
+         rep('pink', 208));
   p = qplot(v1, v2, data=dataset, 
             #geom=c("point", "smooth"), 
             #method="lm", formula=y~x, 
-            color= genotypes, size = trait,
-            xlab=xl, ylab=yl) + theme_bw() +
-    theme(panel.grid.minor = element_blank()) + 
+            colour= genotypes, size = trait,
+            xlab=xl, ylab=yl) + theme_bw() + geom_point(position=position_dodge(width=0.5)) + 
+    theme(panel.grid.minor = element_blank()) + scale_colour_manual(values= cd) +
     labs(size=traitname);
   return(p);
 }
@@ -127,11 +172,11 @@ averageValues = function(data)
 createRatios = function(data)
 {
   copydata = data;
-  copydata = data.frame(copydata,  r1 = sapply(rownames(copydata), 
+  copydata = data.frame(copydata,  d1 = sapply(rownames(copydata), 
                                  function(x) copydata[x,'GS55'] - copydata[x,'GS39']));
-  copydata = data.frame(copydata,  r2 = sapply(rownames(copydata), 
+  copydata = data.frame(copydata,  d2 = sapply(rownames(copydata), 
                                  function(x) copydata[x,'GS65'] - copydata[x,'GS55']));
-  copydata = data.frame(copydata,  r3 = sapply(rownames(copydata), 
+  copydata = data.frame(copydata,  d3 = sapply(rownames(copydata), 
                                  function(x) copydata[x,'FLS'] - copydata[x,'GS55']));
   return(copydata);
 }
@@ -142,7 +187,8 @@ plotPCA = function(data)
   copydata = data;
   rownames(copydata) = c(as.character(dtaM$genotype[1:12]), as.character(13:nrow(copydata)));
  
-  res <- PCA(copydata[,c(2, 4:ncol(copydata))], graph=F, quali.sup=c(1), scale.unit=TRUE);
+  i = copydata[,c(2, 4:ncol(copydata))];
+  res <- PCA(copydata[,c(2, 4:ncol(copydata))], graph=T, quali.sup=c(1), scale.unit=TRUE);
   pdf('PCARes.pdf');
   plot.PCA(res, axes=c(1, 2), choix="ind")
   plot(res, choix = "var", cex=0.9, label='var',  col.var = rainbow(10), 
@@ -209,6 +255,19 @@ deleteSample = function(data, sample_list)
 }
 
 
+countNA = function()
+{
+  p = length(dta$GS39[is.na(dta$GS39)]) + 
+  length(dta$GS39[is.na(dta$GS55)]) +
+  length(dta$GS39[is.na(dta$GS65)]) +
+         length(dta$GS39[is.na(dta$FLS)]) +
+                length(dta$GS39[is.na(dta$FFLL)]);
+  
+  i = length(dta$GS39) * 5;
+  print((p * 100) / i);
+  
+}
+
 metafilename = 'w8_metadata.csv'; # Read metadata
 metatable = read_data(metafilename, TRUE);
 groundtruthfilename = 'w8_groundtruth.csv';
@@ -247,30 +306,33 @@ write.table(dtaM[,c(1,19)], file='wheat_phenoS.csv', sep=',', row.names = F);
 
 # Plot correlations
 tiff('corplot.tiff',  width = 1980, height = 1580,res=200);
-pairs.panels(dtaM[,4:21]) 
+pairs.panels(dtaM[,3:21]) 
 dev.off();
 
-break()
+pv = calculatePvalue(dtaM[,4:21]);
+writeHeatMatp(pv$pvaluep2Mean, pv$pvaluep2Mean, 'Mixed pop (r)', '#EEE5DE',colnames(dtaM[,4:21]), 1);
+writeHeatMatp(pv$ccpop2Mean, pv$ccpop2Mean, 'Mixed pop (r)', '#EEE5DE',colnames(dtaM[,4:21]), 1);
+
 # Plot scatter plots
 genotypes = c(as.character(dtaM$genotype[1:12]), rep('RIL', nrow(dtaM)-12));
 FFLL= c(dtaM$FFLL[1:12]/100, dtaM$FFLL[13:nrow(dtaM)]/100);
 
 
-tiff('r1vsFLS.tiff', width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$r1, dtaM$FLS, dtaM, FFLL, genotypes, 'r1', 'FLS', 'FFLL')
+tiff('d1vsFLS.tiff', width = 1080, height = 1080,res=200);
+p = plotDiagrams(dtaM$d1, dtaM$FLS, dtaM, FFLL, genotypes, 'd1', 'FLS', 'FFLL')
 print(p);
 dev.off();
 
 FLS= c(dtaM$FLS[1:12]/100, dtaM$FLS[13:nrow(dtaM)]/100);
-tiff('r2vsr3.tiff',  width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$r2, dtaM$r3, dtaM, FLS, genotypes, 'r2', 'r3', 'FLS')
+tiff('d2vsd3.tiff',  width = 1080, height = 1080,res=200);
+p = plotDiagrams(dtaM$d2, dtaM$d3, dtaM, FLS, genotypes, 'd2', 'd3', 'FLS')
 print(p);
 dev.off();
 
 genotypes = c(as.character(dtaM$genotype[1:12]), rep('RIL', nrow(dtaM)-12));
 SM= c(dtaM$SM[1:12]/10, dtaM$SM[13:nrow(dtaM)]/10);
-tiff('r3vsFLS.tiff',  width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$r3, dtaM$FLS, dtaM, SM, genotypes, 'r3', 'FLS', 'SM');
+tiff('d3vsFLS.tiff',  width = 1080, height = 1080,res=200);
+p = plotDiagrams(dtaM$d3, dtaM$FLS, dtaM, SM, genotypes, 'd3', 'FLS', 'SM');
 print(p);
 dev.off();
 
@@ -285,11 +347,11 @@ plotPCA(dtaM);
 
 # Plot histograms
 png('histrait.tiff', width = 1600, height = 1600,res=200);
-plotHist(dtaM, colnames(dtaM)[4:21], c(4,5));
+plotHist(dtaM, colnames(dtaM)[3:21], c(4,5));
 dev.off();
 
 pdf('histrait.pdf', width = 600, height = 600);
-plotHist(dtaM, colnames(dtaM)[4:21], c(4,5));
+plotHist(dtaM, colnames(dtaM)[3:21], c(4,5));
 dev.off();
 
 png('selectedtraits.tiff', width = 1600, height = 1600,res=200);
@@ -298,7 +360,8 @@ dev.off();
 
 
 #clusplot(dtaM[,3:21], fit$cluster, color=TRUE, shade=TRUE,          labels=2, lines=0)
-barcol = c(rep('blue',9), 'red','blue', 'blue');
+barcol = c('blue', 'blue','blue', 'red', 'blue','blue', 'blue','blue', 'blue',
+           'red','blue', 'blue');
 
 png('barplotParentsFLS.png', width = 1000, height = 600,res=200);
 barplot(dtaM$FLS[1:12], names.arg = dtaM$genotype[1:12], las=2, 
