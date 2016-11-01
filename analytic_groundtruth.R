@@ -1,5 +1,6 @@
 rm(list=ls()); # Delete files
 cat('\014') 
+setwd("M:/anyela/repo/senescence_disease");
 source('generic.r');
 library(gclus);
 library(ggplot2)
@@ -28,9 +29,6 @@ calculatePvalue = function(data)
   l$ccpop2Mean[l$pvaluep2Mean > 0.05] = NA;
   return(l);
 }
-
-
-
 
 
 
@@ -122,8 +120,12 @@ plotforDisease = function(data)
   }
 }
 
-plotDiagrams = function(v1, v2, dataset, trait, genotypes, xl, yl, traitname)
+plotDiagrams = function(v1, v2, dataset, trait, genotypes, xl, yl, traitname, ontology)
 {
+  x = which(ontology$Abbreviation.in.paper == xl);
+  y = which(ontology$Abbreviation.in.paper == yl);
+  z = which(ontology$Abbreviation.in.paper == traitname);
+  
   cd = c("blue", "red","gray", 'green4', 'black', 'yellow', 'purple', 'brown', 'deepskyblue1', 
          'coral1', 'green', 'magenta1',
          rep('pink', 208));
@@ -131,20 +133,23 @@ plotDiagrams = function(v1, v2, dataset, trait, genotypes, xl, yl, traitname)
             #geom=c("point", "smooth"), 
             #method="lm", formula=y~x, 
             colour= genotypes, size = trait,
-            xlab=xl, ylab=yl) + theme_bw() + geom_point(position=position_dodge(width=0.5)) + 
-    theme(panel.grid.minor = element_blank()) + scale_colour_manual(values= cd) +
-    labs(size=traitname);
+            xlab=paste(xl, '/',ontology$Unit[x]), ylab=paste(yl, '/',ontology$Unit[x])) + 
+    theme_bw() + geom_point(position=position_dodge(width=0.5)) + 
+            theme(panel.grid.minor = element_blank()) + 
+            scale_colour_manual(values= cd) +
+            labs(size=paste(traitname, '/', ontology$Unit[z] ));
   return(p);
 }
 
 
-plotHist = function(data, traitlist,coor)
+plotHist = function(data, traitlist, coor, ontology)
 {
   copydata = data;
   par(mfrow=c(coor))
   for(trait in traitlist)
   {
-    hist(dtaM[[trait]], col='red', xlab=trait, ylab='frequency', main='');
+    i = which(ontology$Abbreviation.in.paper == trait);
+    hist(dtaM[[trait]], col='red', xlab=ontology[i, 'Unit'], ylab='frequency', main=trait);
   }
 }
 
@@ -178,6 +183,10 @@ createRatios = function(data)
                                  function(x) copydata[x,'GS65'] - copydata[x,'GS55']));
   copydata = data.frame(copydata,  d3 = sapply(rownames(copydata), 
                                  function(x) copydata[x,'FLS'] - copydata[x,'GS55']));
+  copydata = data.frame(copydata,  TEW = sapply(rownames(copydata), 
+                                               function(x) copydata[x,'FEW'] + copydata[x,'OEW']));
+  copydata = data.frame(copydata,  HI = sapply(rownames(copydata), 
+                                                function(x) copydata[x,'TEW'] / copydata[x,'PW']));
   return(copydata);
 }
 
@@ -188,12 +197,32 @@ plotPCA = function(data)
   rownames(copydata) = c(as.character(dtaM$genotype[1:12]), as.character(13:nrow(copydata)));
  
   i = copydata[,c(2, 4:ncol(copydata))];
-  res <- PCA(copydata[,c(2, 4:ncol(copydata))], graph=T, quali.sup=c(1), scale.unit=TRUE);
+  res <- PCA(copydata[,c(2, 3:ncol(copydata))], graph=F, quali.sup=c(1), scale.unit=TRUE);
   pdf('PCARes.pdf');
   plot.PCA(res, axes=c(1, 2), choix="ind")
   plot(res, choix = "var", cex=0.9, label='var',  col.var = rainbow(10), 
        lwd=2, font.lab=2, font=2, ylab='hh');
   dev.off();
+  res.hcpc = HCPC(res);
+  
+}
+
+
+convert2Word = function(trait, data)
+{
+  copydata = data;
+  i = 1
+  v = c();
+  for(t in copydata)
+  {
+    x = which(semantica[[trait]] == round(t));
+    
+    w = paste(trait, '_word', sep='');
+    v = append(v, as.character(semantica[x, w]));
+    print(paste(i, ':', round(t),x, as.character(semantica[x, w])));
+    i = i + 1;
+  }
+  return(v);
 }
 
 preproccesdata = function(data)
@@ -269,9 +298,12 @@ countNA = function()
 }
 
 metafilename = 'w8_metadata.csv'; # Read metadata
-metatable = read_data(metafilename, TRUE);
+metatable = read_data(metafilename, TRUE, ',');
 groundtruthfilename = 'w8_groundtruth.csv';
-groundtruthtable = read_data(groundtruthfilename, TRUE);
+groundtruthtable = read_data(groundtruthfilename, TRUE, ',');
+riltable = read_data('ril_name.csv', TRUE, ',');
+ontologyfilename = 'ontology.csv';
+ontologytable = read_data(ontologyfilename, TRUE, ',');
 
 # preproccesdata
 groundtruthtable = changeCols(groundtruthtable);
@@ -302,60 +334,62 @@ dta_avg = averageValues(dta_imp$copydata);
 
 
 dtaM = createRatios(dta_avg);
-write.table(dtaM[,c(1,19)], file='wheat_phenoS.csv', sep=',', row.names = F);
+phenotable = merge(riltable, g, by.x='genotype', 'genotype');
+colnames(phenotable)[2] = 'SUBJECT.NAME'
+write.table(phenotable[,c(-1, -3)], file='wheat.phenotypeall', sep='\t', row.names = F);
 
 # Plot correlations
 tiff('corplot.tiff',  width = 1980, height = 1580,res=200);
-pairs.panels(dtaM[,3:21]) 
+pairs.panels(dtaM[,3:ncol(dtaM)]) 
 dev.off();
 
 pv = calculatePvalue(dtaM[,4:21]);
-writeHeatMatp(pv$pvaluep2Mean, pv$pvaluep2Mean, 'Mixed pop (r)', '#EEE5DE',colnames(dtaM[,4:21]), 1);
-writeHeatMatp(pv$ccpop2Mean, pv$ccpop2Mean, 'Mixed pop (r)', '#EEE5DE',colnames(dtaM[,4:21]), 1);
+# writeHeatMatp(pv$pvaluep2Mean, pv$pvaluep2Mean, 'Mixed pop (r)', '#EEE5DE',colnames(dtaM[,4:21]), 1);
+# writeHeatMatp(pv$ccpop2Mean, pv$ccpop2Mean, 'Mixed pop (r)', '#EEE5DE',colnames(dtaM[,4:21]), 1);
 
 # Plot scatter plots
 genotypes = c(as.character(dtaM$genotype[1:12]), rep('RIL', nrow(dtaM)-12));
 FFLL= c(dtaM$FFLL[1:12]/100, dtaM$FFLL[13:nrow(dtaM)]/100);
 
 
-tiff('d1vsFLS.tiff', width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$d1, dtaM$FLS, dtaM, FFLL, genotypes, 'd1', 'FLS', 'FFLL')
+tiff('figure4.tiff', width = 1080, height = 1080,res=200);
+p = plotDiagrams(dtaM$d1, dtaM$FLS, dtaM, FFLL, genotypes, 'd1', 'FLS', 'FFLL', ontologytable)
 print(p);
 dev.off();
 
 FLS= c(dtaM$FLS[1:12]/100, dtaM$FLS[13:nrow(dtaM)]/100);
-tiff('d2vsd3.tiff',  width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$d2, dtaM$d3, dtaM, FLS, genotypes, 'd2', 'd3', 'FLS')
+tiff('d2vsd3.tiff',  width = 1080, height = 1089,res=200);
+p = plotDiagrams(dtaM$d2, dtaM$d3, dtaM, FLS, genotypes, 'd2', 'd3', 'FLS', ontologytable)
 print(p);
 dev.off();
 
 genotypes = c(as.character(dtaM$genotype[1:12]), rep('RIL', nrow(dtaM)-12));
 SM= c(dtaM$SM[1:12]/10, dtaM$SM[13:nrow(dtaM)]/10);
-tiff('d3vsFLS.tiff',  width = 1080, height = 1080,res=200);
-p = plotDiagrams(dtaM$d3, dtaM$FLS, dtaM, SM, genotypes, 'd3', 'FLS', 'SM');
+tiff('figure5.tiff',  width = 1080, height = 1080,res=200);
+p = plotDiagrams(dtaM$d3, dtaM$FLS, dtaM, SM, genotypes, 'd3', 'FLS', 'SM', ontologytable);
 print(p);
 dev.off();
 
 
 # fit model
 
-
+break()
 fitmodel(dtaM)
   
 # PLOT PCA
 plotPCA(dtaM);
 
 # Plot histograms
-png('histrait.tiff', width = 1600, height = 1600,res=200);
-plotHist(dtaM, colnames(dtaM)[3:21], c(4,5));
+tiff('histrait.tiff', width = 1600, height = 1600,res=200);
+plotHist(dtaM, colnames(dtaM)[3:ncol(dtaM)], c(5,5), ontologytable);
 dev.off();
 
 pdf('histrait.pdf', width = 600, height = 600);
-plotHist(dtaM, colnames(dtaM)[3:21], c(4,5));
+plotHist(dtaM, colnames(dtaM)[3:ncol(dtaM)], c(4,5));
 dev.off();
 
-png('selectedtraits.tiff', width = 1600, height = 1600,res=200);
-plotHist(dtaM, colnames(dtaM)[c(5,7,9, 21)], c(2,2));
+tiff('selectedtraits.tiff', width = 1600, height = 1600,res=200);
+plotHist(dtaM, colnames(dtaM)[c(5,7,9, 21)], c(2,2), ontologytable);
 dev.off();
 
 
@@ -363,9 +397,14 @@ dev.off();
 barcol = c('blue', 'blue','blue', 'red', 'blue','blue', 'blue','blue', 'blue',
            'red','blue', 'blue');
 
-png('barplotParentsFLS.png', width = 1000, height = 600,res=200);
+png('barplotParentsFLS.png');
+par(mfrow=c(2,1))
 barplot(dtaM$FLS[1:12], names.arg = dtaM$genotype[1:12], las=2, 
-        cex.names = 0.7, col=barcol, ylab = 'FLS DAS', 
-        ylim = c(0,300))
+        cex.names = 0.7, col=barcol, ylab = 'FLS / DAS', 
+        ylim = c(0,300));
+barplot(dtaM$HI[1:12], names.arg = dtaM$genotype[1:12], las=2, 
+        cex.names = 0.7, col=barcol, ylab = 'HI / ratio');
+
+
 dev.off();
 dev.off()

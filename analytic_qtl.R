@@ -2,24 +2,17 @@
 # This script prepares data for QTL mapping
 rm(list=ls()); # Delete files
 cat("\014");
-
-
-stackFiles = function(patternword)
-{
-  files <- list.files(pattern = patternword);
-  myfiles = do.call(rbind, lapply(files, 
-                                  function(x) read.table(x, stringsAsFactors = TRUE, header=T)));
-  return(myfiles);
-  
-}
-
+setwd("M:/anyela/repo/senescence_disease");
+source('generic.R')
+source('qtl/manhattan.r');
+source('qtl/qvalue.r');
 
 
 createQTLTable = function(mapdata)
 {
   setwd('qtl');
-  qtldata = stackFiles('qtls');
-  imputedata = stackFiles('imputed');
+  qtldata = stackDataSets(stackFiles('qtls'));
+  imputedata = stackDataSets(stackFiles('imputed'));
   h = merge(qtldata, mapdata, by.x='peak.SNP', by.y='Marker');
   h = h[order(h$phenotype,h$chromosome, h$cM),];
   h$logP = round(h$logP,2);
@@ -67,7 +60,21 @@ get_MAGIC = function(mapfile)
 }
 
 
+break();
 f = get_MAGIC('wheat_geno_coordinates.csv'); 
 t = createQTLTable(f$map_raw);
 write.table(t[,c(2,1,9,10,7,8,12:19)], file='qtltable.csv', sep=',', row.names = F);
 setwd('..');
+
+setwd('qtl');
+filelist = stackFiles('scan')
+u = loadMarkerFile(filelist[c(1:3,19)], TRUE, '\t', 'from');
+
+
+for(cname in colnames(u)[4:14])
+{
+  #tiff(paste('qtl_', cname,'.tiff'),  width = 1400, height = 1080,res=200);
+  manhattan(u[,c('marker','chrom', 'pos',cname)], fdr.level = 0.05, cname)
+  #dev.off();
+  if(readline(cname) == 'q') { break()}
+}

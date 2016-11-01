@@ -221,9 +221,9 @@ transform_wheatgeno = function()
 
 
 #f = get_MAGIC('wheat_pheno.csv', 'founders.geno.csv','wheat_geno.csv','wheat_geno_coordinates.csv'); 
-phenofile = 'wheat_phenoS.csv';
-foundersgenofile = 'founders.geno.csv';
-rildgenofile = 'wheat_geno.csv';
+phenofile = 'w8_pheno.csv';
+foundersgenofile = 'C:/Anyela/repo/senescence_disease/founders.geno.csv';
+rildgenofile = 'C:/Anyela/repo/senescence_disease/wheat_geno.csv';
 mapfile = 'wheat_geno_coordinates.csv';
 
 
@@ -254,7 +254,7 @@ break();
 # Check for population structure
 p = check_PStruct(t(rils$R));
 png('PCA_PS.png', width = 1600, height = 1600,res=200);
-plot(p/sum(p),ylab="Fraction Explained", xlab='RILs')
+plot(p/sum(p),ylab="Fraction Explained", xlab='ordered  eigenvalues')
 dev.off()
 
 # Create mpcrop object

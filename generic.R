@@ -1,9 +1,90 @@
 library('ggplot2'); 
 library(data.table);#
-#library('RODBC');
-#library('RPostgreSQL');
+library('RODBC');
+library('RPostgreSQL');
 #library('RMySQL');
 
+
+converIdtag = function(x)
+{
+  if(x < 10000) 
+  { 
+    p = paste('W8-','00',x, sep='')
+  } 
+  
+  else if(x >= 10000 & x < 100000) 
+  { 
+    p = paste('W8-','0',x, sep='')
+  } 
+  
+  else 
+  { 
+    p = paste('W8-',x, sep='')
+  }
+  
+  return(p);
+}
+
+
+stackFiles = function(patternword)
+{
+  files <- list.files(pattern = patternword);
+  
+  return(files);
+}
+
+stackDataSets = function(filelist)
+{
+  
+  myfiles = do.call(rbind, lapply(filelist, 
+                function(x) read.table(x, stringsAsFactors = TRUE, header=T)));
+}
+
+
+loadPheno = function(file_list, h, sepc, cl=NULL, b)
+{
+ 
+  f = read.table(file_list[1], sep=sepc, header=h);
+  for(fname in file_list[2:length(file_list)])
+  {
+    
+    f1 =  read.table(fname, sep=sepc, header=F);
+    f = merge(f, f1, by=b, by.y=b)
+    
+  }
+  return(f);
+}
+
+
+loadMarkerFile = function(file_list, h, sepc, b)
+{
+  
+  f = read.table(file_list[1], sep=sepc, header=h);
+  f = f[, c(1,8,6)];
+  
+ 
+  for(fname in file_list)
+  {
+    f1 =  read.table(fname, sep=sepc, header=h);
+    colnames(f1)[9] = strsplit(fname, '\\.')[[1]][1];
+    f = merge(f, f1[,c(1,8,9)], by.x=c('from', 'chromosome'), 
+              by.y=c('from', 'chromosome'));
+  }
+  
+  colnames(f)[1:3] = c('marker', 'chrom',	'pos');
+  return(f);
+}
+
+
+# w = what (data.frame)
+# b = by: Should be a list
+averageValues = function(w, b, funtype='mean')
+{
+  copydata = aggregate(w, by = b, 
+                       FUN= "mean", na.action = na.pass);
+  
+  return(copydata);
+}
 
 
 # Merge files
@@ -16,13 +97,14 @@ datatamerge_files <- function(p = 'txt')
 
 
 # Function to read data from external files
-read_data = function(datafilename, h)
+read_data = function(datafilename, h, sepc)
 {
-  idata <- read.table(datafilename, sep=',', header=h, na.strings = "NA", stringsAsFactors=TRUE);
+  idata <- read.table(datafilename, sep=sepc, header=h, na.strings = "NA", stringsAsFactors=TRUE);
   
   return(idata);
   
 }
+
 
 # Change colname
 change_colname = function(data, oldp, newp)
@@ -157,6 +239,11 @@ sum_intensities <- function(data)
   
 }
 
+#Select subset of data
+selectSubset = function(data, fieldname, targetname)
+{
+  return(data[which(data[[fieldname]]  == targetname),]);
+}
 
 convert2hex <- function(data1, data2)
 {
@@ -239,7 +326,13 @@ connect2DB = function(query_list, db_list)
   return(data);
 }
 
-
+# Create formula
+creafeformula = function()
+{
+  
+  formul = as.formula(paste('y ~', paste(rownames(data.frame(summary(qtl))), collapse='+')));
+  
+}
 
 
 #Export data in weka format
@@ -251,6 +344,47 @@ create_query_temp = function(tdate)
                FROM phenomics.glasshouse_sensors where logdate > '%s' and compartent = '5' ",tdate);
   return(gsub("\r?\n|\r", " ", st));
 }
+
+convert2factor = function(data, variable_list)
+{
+  
+  copydata = data;
+  for(v in variable_list)
+  {
+    copydata[[v]]  = factor(copydata[[v]])
+  }
+  return(copydata)
+}
+
+#Date format
+changeDateFormat = function(data, fname)
+{
+  copydata = data;
+  copydata[[fname]] <- as.Date(copydata[[fname]],format = "%Y-%m-%d");
+  copydata[[fname]] = format(copydata[[fname]], "%d/%m/%Y");
+  return(copydata);
+  
+}
+
+
+createDAS = function(ds="2014-10-20", de="2015-04-30")
+{
+  dv = seq(as.Date(ds), as.Date(de), by="days");
+  dv = format(dv, "%d/%m/%Y");
+  dv = data.frame(date=dv, DAS = 1:length(dv));
+  return(dv);
+  
+}
+
+resetlevels = function(data, fname)
+{
+  copydata = data;
+  copydata[[fname]] = factor(copydata[[fname]], levels=unique(copydata[[fname]]));
+  row.names(copydata) = 1:nrow(copydata);
+  return(copydata);
+}
+
+
 
 # split timestamp into date and time_ Lemnatec
 process_timestamp = function(data, timename, sp, timeaction)
@@ -481,75 +615,143 @@ merge_data <- function(d1, d2, genoname, gname)
 # }
 # 
 # 
-# growthrate <- function(data, character_list)
-# {
-#  time_list <- as.numeric(as.character(unique(data$time)));
-#  ecotype_list <- unique(data$ecotype);
-#  time_list_adj <- c(17,22,25,28,32);
-#  datacopy <- data;
-# 
-#  for(ecotype in ecotype_list[1:19])
-#  {
-#    for(time in 2:length(time_list))
-#    {
-#      sample_list <- as.character(unique(datacopy[intersect(which(datacopy$ecotype == ecotype), which(datacopy$time == time_list[time-1])),'id']));
-#      for(sample in sample_list)
-#      {
-#        for(character in character_list)
-#        { 
-#          np <- intersect(intersect(which(datacopy$ecotype == ecotype), which(datacopy$time == time_list[time-1])), which(datacopy$id == sample));
-#          nn <- intersect(intersect(which(datacopy$ecotype == ecotype), which(datacopy$time == time_list[time])), which(datacopy$id == sample));
-#          if(!is.na(data[np, character]) & !is.na(data[nn, character]))
-#          {
-#           
-#            datacopy[nn,character] <- log(data[nn, character]) - log(data[np, character]) / ( time_list_adj[time] - time_list_adj[time-1]);
-#          }
-#        }
-#      }
-#    }
-#  }
-#  return(datacopy);
-# }
-# 
-# 
-# wue <- function(data)
-# {
-#  datacopy <- data;
-#  i <- union(which(datacopy$writer_label != 'W2_sv0'), which(as.Date(datacopy$time) == as.Date('2013-09-11')));
-#  datacopy <- datacopy[c(-i),];
-#  datacopy$time <- as.numeric(datacopy$time);
-#  time_list <- unique(datacopy$time);
-#  line_list <- as.character(unique(datacopy$id_tag));
-# 
-# 
-#  for(line in line_list)
-#  {
-#    for(time in 2:(length(time_list)-1))
-#    {
-#      #sample_list <- as.character(unique(datacopy[intersect(which(datacopy$id_tag == line), which(datacopy$time == time_list[time-1])),'id']));
-#      #for(sample in sample_list)
-#      #{
-# 		print(line)	
-# 		print(time)
-# 		#print(sample)
-#          np <- intersect(which(datacopy$id_tag == line), which(datacopy$time == time_list[time-1]));
-#          nn <- intersect(which(datacopy$id_tag == line), which(datacopy$time == time_list[time])); 
-# 		print(nn);  
-# 		print(np);  
-# 	    	print(datacopy$weight_before[np]);    
-# 		print(datacopy$weight_before[nn]);
-# 		print(datacopy$water_amount[np]);
-# 		print(datacopy$water_amount[nn]);           
-#          datacopy[nn, 'wue'] <- (datacopy[nn[1], 'weight_after'] - datacopy[nn[1], 'weight_before']) / (datacopy[nn[1], 'water_amount'] - datacopy[np[1], 'water_amount']);
-# 	   print(datacopy[nn, 'wue']);
-# 	  
-# 
-#      #}
-#    }
-#  }
-#  return(datacopy);
-# }
-# 
+# Calculate growth rate
+# data 
+calculateGrowthRate <- function(data, genotype_list, DAS_list, trait)
+{
+  rownames(data) = 1:nrow(data);
+  copydata = data;
+  copydata = data.frame(copydata, GR=rep(0, nrow(copydata)));
+  
+  for(gname in genotype_list)
+  {
+    for(dname in 2:length(DAS_list))
+    {
+      np <- intersect(which(copydata[['genotype']] == gname), which(copydata[['DAS']] == DAS_list[dname-1]));
+      nn <- intersect(which(copydata[['genotype']] == gname), which(copydata[['DAS']] == DAS_list[dname]));
+      if(!is.na(data[np, trait]) & !is.na(data[nn, trait]))
+      {
+        copydata[nn, 'GR'] <- log(data[nn, trait]) - log(data[np, trait]) / ( DAS_list[dname] - DAS_list[dname-1]);
+        print(copydata[nn, 'GR']);
+      }
+    }
+  }
+  
+  
+  
+ return(copydata);
+}
+
+
+
+scaleRange = function(min)
+{
+  (x-min(x))/(max(x)-min(x))
+}
+
+
+growthModels = function()
+{
+    fm <- lme(Area.in.square.mm ~ DAS, ss, random = ~ DAS | genotype)
+    fm1 <- lme(log(Area.in.square.mm) ~ DAS,  ss, random = ~ DAS | genotype)
+    fm2 <- lme(log(Area.in.square.mm) ~ DAS + I(DAS^2), ss, random = ~ DAS | genotype)
+    fm3 <- lme(log(Area.in.square.mm) ~ DAS + I(DAS^2) + I(DAS^3), ss, random = ~ DAS | genotype)
+   
+    plot(fm3, log(Area.in.square.mm) ~ fitted(.) | genotype, abline = c(0,1))
+    
+    u =predict(fm3, ss, level = 0:1)
+    with(ss, plot(log(Area.in.square.mm) ~ DAS))
+    points(ss$DAS, u$predict.genotype, col='red', lwd=5);
+    
+}
+
+
+# b biomass; w water; n = index
+wue <- function(data, genotype_list, das_list)
+{
+  copydata <- data; 
+ #time_list <- c(163, 164,165,166);#unique(datacopy$DAS);
+ #line_list <- as.character(unique(datacopy$genotype));
+ #line_list1 = c('MEL 046-7'); 
+
+  for(line in genotype_list)
+  {
+    for(time in 2:(length(das_list)-1))
+    {
+      nb <- intersect(which(datacopy[['genotype']] == line), which(datacopy[['DAS']] == das_list[time-1]));
+      na <- intersect(which(datacopy[['genotype']] == line), which(datacopy[['DAS']] == das_list[time]));
+      bb = datacopy[['Area.in.square.mm']][nb]; 
+      ba = datacopy[['Area.in.square.mm']][na];
+      wb = datacopy[['water_amount']][nb];
+      wa = datacopy[['water_amount']][na];
+    
+      if (ba < bb){
+        datacopy[['Area.in.square.mm']][na] = bb;
+        ba = datacopy[['Area.in.square.mm']][na];
+      }
+      dtb = ba/1000 - bb/1000;
+      dtw = wa - wb;
+      if(dtw <= 0)
+        dtw = 1;
+      
+      wue = dtb / dtw;
+      
+		  datacopy[na, 'wue'] <- round(wue, 2);
+		  #if(wue == Inf | is.na(wue))
+		  #{
+	      #print(paste(line, time_list[time], nb, bb, ba, wb, wa, wue, sep=': '));
+		  #}
+    }
+  }
+  datacopy = datacopy[-(which(datacopy[['DAS']] == time_list[1])),]
+  return(datacopy);
+}
+
+
+# fname = 'genotype'
+# genotype_list = unique(o$genotype)
+#das_list = unique(o$DAS)
+
+WUEDaily = function(data)
+{
+  wuetable = data;
+  wuetable$water_amount[wuetable$water_amount == 0.01] = NA;
+  wuetable = wuetable[!is.na(wuetable$water_amount),];
+  wuetable = data.frame(wuetable, 
+                        WUE = sapply(row.names(wuetable), 
+                                     function(x) wuetable[x,'Area.in.square.mm']/wuetable[x,'water_amount'])); # area/water_amount
+  m = which(wuetable$DAS <= 101);
+  wuetable = wuetable[-m,]; # delete rows whose time is <= 2015-05-11
+  m = which(wuetable$DAS <= 112);
+  wuetable = wuetable[-m,]; # 
+  return(wuetable)
+  
+}
+
+
+
+deleteUncomplete = function(genotype_list, das_list, data, fname)
+{
+  glist = c();
+  copydata = o;
+  for(dname in das_list)
+  {
+    subdata = copydata[which(copydata[[fname[1]]] == dname),];
+    if(length(unique(subdata[[fname[2]]])) !=  length(genotype_list))
+    {
+      glist = append(glist, dname)
+      
+    }
+    
+  }
+  i = match(copydata$DAS, glist);
+  copydata = copydata[is.na(i),];
+  
+  return(copydata);
+}
+
+
+
 # # ------------- Read metadata
 # 
 # 
@@ -709,48 +911,48 @@ plot_wue = function(data)
   }
 }
 # 
-# # Plot temperature
-# plot_temp = function(data)
-# {
-#   copydata = data;
-#   for(ename in unique(copydata$genotypename))
-#   {    
-#     fname = paste("Intplot_ArePerGenotype_temp", ename, ".png", sep="");
-#     
-#     i = which(copydata$genotype == ename);
-#     sdata = copydata[i, ];
-#     pd <- position_dodge(0.1) # move them .05 to the left and right
-#     tgc <- summarySE(sdata, measurevar="area", groupvars=c('water.treatment', 
-#                      'genotypename', 'date', 'temp'));
-#     png(fname);
-#     mn = min(sdata$temp);
-#     mx = max(sdata$temp);
-#     p = ggplot(data = tgc, aes(x=date, y=area, colour=temp, shape=water.treatment, group=
-#       interaction(water.treatment, temp))) +
-#       ggtitle(ename) + geom_path(alpha = 0.5) + 
-#       geom_errorbar(aes(ymin=area-se, ymax=area+se), width=.1, position=pd) +
-#       stat_summary(fun.y=mean, geom="point", size=4) +
-#       stat_summary(fun.y=mean, geom="line") +
-#       theme(axis.text.x=element_text(angle=90),
-#             axis.text.x = element_text(size=20)) +
-#       scale_colour_gradient(limits=c(mn, mx), low="yellow", high="red");
-#     print(p);
-#     #if(readline(fname) == 'q') { break();}
-#     dev.off();
-#   }      
-# }
+# Plot temperature
+plot_temp = function(data)
+{
+  copydata = data;
+  for(ename in unique(copydata$genotypename))
+  {
+    fname = paste("Intplot_ArePerGenotype_temp", ename, ".png", sep="");
+
+    i = which(copydata$genotype == ename);
+    sdata = copydata[i, ];
+    pd <- position_dodge(0.1) # move them .05 to the left and right
+    tgc <- summarySE(sdata, measurevar="area", groupvars=c('water.treatment',
+                     'genotypename', 'date', 'temp'));
+    png(fname);
+    mn = min(sdata$temp);
+    mx = max(sdata$temp);
+    p = ggplot(data = tgc, aes(x=date, y=area, colour=temp, shape=water.treatment, group=
+      interaction(water.treatment, temp))) +
+      ggtitle(ename) + geom_path(alpha = 0.5) +
+      geom_errorbar(aes(ymin=area-se, ymax=area+se), width=.1, position=pd) +
+      stat_summary(fun.y=mean, geom="point", size=4) +
+      stat_summary(fun.y=mean, geom="line") +
+      theme(axis.text.x=element_text(angle=90),
+            axis.text.x = element_text(size=20)) +
+      scale_colour_gradient(limits=c(mn, mx), low="yellow", high="red");
+    print(p);
+    #if(readline(fname) == 'q') { break();}
+    dev.off();
+  }
+}
+
 # 
-# 
-# #average data
-# avgdata <- function(data, fields, variables)
-# {
-#   print(fields)
-#   print(variables)
-#   copydata <- data;
-#   copydata = aggregate(cbind(fields) ~ variables, data = copydata, FUN= "mean" )
-#   return(copydata) 
-# }
-# 
+#average data
+avgdata <- function(data, fields, variables)
+{
+  print(fields)
+  print(variables)
+  copydata <- data;
+  copydata = aggregate(cbind(fields) ~ variables, data = copydata, FUN= "mean" )
+  return(copydata)
+}
+
 # 
 # # Split temp data by date by hour
 # splittime = function(data)
@@ -791,3 +993,120 @@ pcacomplete <- function(data)
   
 }
 
+# Check file list
+# filelist: List of files
+checkFileSize = function(filelist)
+{
+  m = c();
+  for(i in 1:length(filelist))
+  {
+
+    if(file.info(filelist[i])$size <= 2)
+    {
+      m = append(m, i)
+    }
+  }
+  return(filelist[-m]);
+}
+
+
+manhattan <- function(input, fdr.level = 0.05, phenotypename, chromsl=NULL, flab=1) {
+  input <- input[order(input[, 2], input[, 3]), ]
+  chroms <- unique(input[, 2])
+  n.chrom <- length(chroms)
+  chrom.start <- rep(0, n.chrom)
+  chrom.mid <- rep(0, n.chrom)
+  if (n.chrom > 1) {
+    for (i in 1:(n.chrom - 1)) {
+      chrom.start[i + 1] <- chrom.start[i] + max(input[which(input[,
+                                                                   2] == chroms[i]), 3]) + 1
+    }
+  }
+  x.max <- chrom.start[n.chrom] + max(input[which(input[,
+                                                        2] == chroms[n.chrom]), 3])
+  plot(0, 0, type = "n", xlim = c(0, x.max), ylim = c(0,
+                                                      max(input[, 4]) + 1), ylab = "-log(p)", xlab = "Chromosome",
+       xaxt = "n", main = phenotypename)
+  for (i in seq(1, n.chrom, by = 2)) {
+    ix <- which(input[, 2] == chroms[i])
+    chrom.mid[i] <- median(chrom.start[i] + input[ix,
+                                                  3])
+    points(chrom.start[i] + input[ix, 3], input[ix, 4],
+           col = "dark blue", pch = 16, cex=0.6)
+  }
+  if (n.chrom > 1) {
+    for (i in seq(2, n.chrom, by = 2)) {
+      ix <- which(input[, 2] == chroms[i])
+      chrom.mid[i] <- median(chrom.start[i] + input[ix,
+                                                    3])
+      points(chrom.start[i] + input[ix, 3], input[ix,
+                                                  4], col = "red", pch = 16, cex=0.6)
+    }
+  }
+  q.ans <- qvalue(10^-input[, 4])
+  temp <- cbind(q.ans, input[, 4])
+  temp <- temp[order(temp[, 1]), ]
+  if (temp[1, 1] < fdr.level) {
+    temp2 <- tapply(temp[, 2], temp[, 1], mean)
+    qvals <- as.numeric(rownames(temp2))
+    x <- which.min(abs(qvals - fdr.level))
+    
+    first <- max(1, x - 2)
+    last <- min(x + 2, length(qvals))
+    if ((last - first) < 4) {
+      last <- first + 3
+    }
+    splin <- smooth.spline(x = qvals[first:last], y = temp2[first:last],
+                           df = 3)
+                  
+    lines(x = c(0, x.max), y = rep(predict(splin, x = fdr.level)$y,
+                                   2), lty = 2)
+  }
+  axis(side = 1, at = chrom.mid, labels = chromsl, cex.axis=flab, las=2)
+  d = list()
+  d$temp = temp
+  #d$fdr = rep(predict(splin, x = fdr.level)$y,2);
+  return(temp)
+}
+
+qvalue <- function(p) 
+{
+  smooth.df = 3
+  if (min(p) < 0 || max(p) > 1) {
+    print("ERROR: p-values not in valid range.")
+    return(0)
+  }
+  lambda = seq(0, 0.9, 0.05)
+  m <- length(p)
+  pi0 <- rep(0, length(lambda))
+  for (i in 1:length(lambda)) {
+    pi0[i] <- mean(p >= lambda[i])/(1 - lambda[i])
+  }
+  spi0 <- smooth.spline(lambda, pi0, df = smooth.df)
+  pi0 <- predict(spi0, x = max(lambda))$y
+  pi0 <- min(pi0, 1)
+  if (pi0 <= 0) {
+    print("ERROR: The estimated pi0 <= 0. Check that you have valid p-values.")
+    return(0)
+  }
+  u <- order(p)
+  qvalue.rank <- function(x) {
+    idx <- sort.list(x)
+    fc <- factor(x)
+    nl <- length(levels(fc))
+    bin <- as.integer(fc)
+    tbl <- tabulate(bin)
+    cs <- cumsum(tbl)
+    tbl <- rep(cs, tbl)
+    tbl[idx] <- tbl
+    return(tbl)
+  }
+  v <- qvalue.rank(p)
+  qvalue <- pi0 * m * p/v
+  qvalue[u[m]] <- min(qvalue[u[m]], 1)
+  for (i in (m - 1):1) {
+    qvalue[u[i]] <- min(qvalue[u[i]], qvalue[u[i + 1]], 
+                        1)
+  }
+  return(qvalue)
+}
